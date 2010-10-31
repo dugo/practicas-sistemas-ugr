@@ -1,0 +1,22 @@
+Compilación
+===========
+
+Para compilar basta como tener instalado el paquete libpcap-dev.
+
+
+Contenido
+=========
+
+ej1.c: Se trata de una analizador de protocolos de red, si no se especifica el dispositivo como primer parámetro, coge el primero que encuentre.
+ej2.c y ej3.c:  Muestra los datos de las cabeceras UDP/TCP resp., ocurre lo mismo que en el anterior si no se especifica el dispositivo.
+ej4.c: Muestra dos conexiones TCP diferentes desde un fichero de trazas.
+ej5.c: Muestra el flujo de una conexión TCP determinada desde un fichero de trazas.
+ej7.c: Detecta un posible escaneo de puertos.
+
+
+Contacto
+========
+Rubén Dugo
+rdugomartin@gmail.com
+@dugo
+http://dug0.com
