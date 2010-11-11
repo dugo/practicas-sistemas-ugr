@@ -1,9 +1,15 @@
-Redes de Computadores
-=====================
-
 Contenido
 =========
-Práctica 3 y 4.
+Práctica 4 de Redes de Computadores.
+Implementación de servidores TCP/UDP secuenciales y concurrentes y sus
+respectivos clientes.
+Los servidores tratan de enviar unas frases a los clientes junto con un
+nombre que se especifica como parámetro, originariamente eran poesías, pero
+yo los cambié por frases. 
+
+Compilación
+===========
+Con la utilidad make
 
 Nota
 ====
