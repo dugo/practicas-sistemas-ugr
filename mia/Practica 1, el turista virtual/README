@@ -1,0 +1,41 @@
+Contenido
+=========
+Práctica 1 de Modelos de Inteligencia Artificial.
+
+Buscar en un mapa de una ciudad, el camino más corto entre dos nodos.
+
+En la práctica están implementados los algoritmos;
+
+    * Búsqueda Primero en Profundidad
+    * Búsqueda Primero en Anchura
+    * Búsqueda por Máxima Pendiente
+    * Búsqueda Primero el Mejor (A-estrella o A*)
+
+Es altamente recomendable para aquellos que están estudiando estos algoritmos, el código está bastante documentado y estructurado.
+
+El código está en C++ y como no, hago uso de las plantillas de la STL, que por cierto, incluyo la encapsulación de la estructura de grafo como plantilla.
+
+Compilación
+===========
+Con la utilidad make
+
+Nota
+====
+Queda prohibido la utilización de este material de forma indebida, entendiéndose como
+tal la entrega total, parcial o de obras derivadas como prácticas o trabajos de asignaturas
+en cualquier curso académico.
+
+Del mismo modo, doy total libertad para utilizar este material como consulta o para
+cualquier tipo de finalidad.
+
+Licencia
+========
+El material queda publicado con licencia GPLv3. Manteniendo siempre el nombre del autor
+en copias del original o derivadas.
+
+Contacto
+========
+Rubén Dugo
+rdugomartin@gmail.com
+@dugo
+http://dug0.com
