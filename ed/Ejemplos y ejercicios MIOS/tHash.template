@@ -1,0 +1,165 @@
+template <class TClave, class TDef>
+int tHash<TClave,TDef>::funcion_hash(TClave dato, int intento) const
+{
+  return (dato + intento-1) % tabla.size();
+}
+
+template <class TClave, class TDef>
+void tHash<TClave,TDef>::realizar_rehashing()
+{
+  int M_antiguo = tabla.capacity();
+
+  // Habría que garantizar que es primo!!
+  int M = M_antiguo*2+1;
+  vector<casillas> tabla_antigua= tabla;
+  tabla = vector<casillas>(M); // Todo nulo
+
+  for (int i= 0; i<M_antiguo; i++)
+    if (tabla_antigua[i].estado == OCUPADA)
+      insertar(tabla_antigua[i].dato);
+}
+
+template <class TClave, class TDef>
+tHash<TClave,TDef>::tHash(int tama) : tabla(tama)
+{
+  num_datos = 0;
+}
+
+template <class TClave, class TDef>
+tHash<TClave,TDef>::tHash(const tHash &th) :
+  tabla(th.tabla)
+{
+  num_datos = th.num_datos;
+}
+
+template <class TClave, class TDef>
+void tHash<TClave,TDef>::insertar(TClave dato)
+{
+  if (num_datos>=tabla.size())
+    realizar_rehashing();
+
+  int casilla = funcion_hash(dato, 1);
+  int intento = 1;
+  bool terminar = false;
+
+  // Insertamos si no aparece ya
+  while (!terminar) {
+    if ((tabla[casilla].estado==OCUPADA && tabla[casilla].dato==dato)
+        || tabla[casilla].estado==LIBRE || tabla[casilla].estado==BORRADA)
+      terminar = true;
+    else {
+      intento++;
+      casilla = funcion_hash(dato, intento);
+    }
+  }
+  if (tabla[casilla].estado==LIBRE || tabla[casilla].estado==BORRADA) {
+    tabla[casilla].dato= dato;
+    tabla[casilla].estado= OCUPADA;
+    num_datos++;
+  }
+}
+
+template <class TClave, class TDef>
+bool tHash<TClave,TDef>::borrar(TClave dato)
+{
+  // Se podría optimizar con rehashing cada cierto número de borrados
+  int casilla = funcion_hash(dato, 1);
+  int intento = 1;
+  bool terminar = false;
+
+  while (!terminar) {
+    if (tabla[casilla].estado==OCUPADA && tabla[casilla].dato==dato
+                || tabla[casilla].estado==LIBRE)
+      terminar = true;
+    else {
+      intento++;
+      casilla = funcion_hash(dato, intento);
+    }
+  }
+  if (tabla[casilla].estado!=LIBRE) {
+    tabla[casilla].estado= BORRADA;
+    num_datos--;
+
+    return true;
+  }
+
+  return false;
+}
+
+template <class TClave, class TDef>
+bool tHash<TClave,TDef>::Existe(TClave dato, TDef &elem) const
+{
+  int casilla = funcion_hash(dato, 1);
+  int intento = 1;
+  bool terminar = false;
+
+  while (!terminar) {
+    if (tabla[casilla].estado==OCUPADA && tabla[casilla].dato==dato
+        || tabla[casilla].estado==LIBRE)
+      terminar = true;
+    else { // Resolver colisión
+      if (intento==tabla.size())
+        terminar = true;
+      else {
+        intento++;
+        casilla = funcion_hash(dato, intento);
+      }
+    }
+  }
+
+  if (intento<tabla.size() && tabla[casilla].estado!=LIBRE)
+    // Necesariamente se ha encontrado el dato
+    elem = tabla[casilla].def;
+
+  return (intento<tabla.size() && tabla[casilla].estado!=LIBRE);
+}
+
+template <class TClave, class TDef>
+tHash<TClave,TDef>::~tHash()
+{
+}
+
+template <class TClave, class TDef>
+typename tHash<TClave,TDef>::iterador
+  tHash<TClave,TDef>::begin() const
+{
+  typename tHash<TClave,TDef>::iterador ite;
+  bool terminar = false;
+
+  ite.latabla = &tabla;
+
+  int i = 0;
+  while (!terminar && i<tabla.size())
+    if (tabla[i].estado==OCUPADA)
+      terminar = true;
+    else
+      i++;
+
+  ite.casilla_actual = i;
+
+  return ite;
+}
+
+template <class TClave, class TDef>
+typename tHash<TClave,TDef>::iterador
+  tHash<TClave,TDef>::end() const
+{
+  typename tHash<TClave,TDef>::iterador ite;
+
+  ite.latabla = &tabla;
+  ite.casilla_actual = tabla.size();
+  return ite;
+}
+
+template <class TClave, class TDef>
+typename tHash<TClave,TDef>::iterador
+  tHash<TClave,TDef>::iterador::operator++()
+{
+  if (casilla_actual<latabla->size())
+    casilla_actual++;
+  while (casilla_actual<latabla->size() &&
+        (*latabla)[casilla_actual].estado!=OCUPADA)
+    casilla_actual++;
+
+  return *this;
+}

@@ -1,0 +1,336 @@
+//-*-Mode: C++;-*-
+
+/*
+  $Id: bst.template,v 1.1 2006/05/24 15:51:42 jmbs Exp $
+*/
+/*
+  $Log: bst.template,v $
+  Revision 1.1  2006/05/24 15:51:42  jmbs
+  Añadiendo bst.h bst.template
+  Versión inicial (incompleta) de BST
+
+*/
+
+/**
+  * @file bst.template
+  * @brief Implementación del TDA bst
+  *
+  *
+  *
+  */
+
+template <typename Key, typename T>
+inline 
+bool BST<Key, T>::encontrar(const pair<Key, T> & e,
+      typename bintree<pair<Key, T> >::node & n,
+      typename bintree<pair<Key, T> >::node & nodo_padre) const
+{
+  bool encontrado = false;
+  n = arbolb.root();
+
+  typename bintree<pair<Key, T> >::node padre_aux;
+
+  while (!n.null() && !encontrado) {
+    Key aux =  (*n).first;
+    if (aux == e.first)  // La clave ya aparece
+      encontrado = true;
+    else {
+      padre_aux = n;
+      if (aux < e.first) // Debe insertarse a la derecha de n
+        n = n.right();
+      else // Debe insertarse a la izquierda de n
+        n = n.left();
+    }
+  }
+  
+  nodo_padre = padre_aux;
+
+  return encontrado;
+}
+
+
+template <typename Key, typename T>
+inline 
+BST<Key, T>::BST()
+{
+}
+
+template <typename Key, typename T>
+void BST<Key, T>::insert(const pair<Key, T> & entrada)
+{
+  bool encontrado = false;
+  typename bintree<pair<Key, T> >::node n, nodo_padre;
+  
+
+  encontrado = encontrar(entrada, n, nodo_padre);
+
+  if (!encontrado) {
+    if (nodo_padre.null()) { // Arbol vacio
+      bintree<pair<Key, T> > aux(entrada);
+      arbolb = aux;
+    }
+    else {
+      bintree<pair<Key, T> > aux(entrada);
+      if ((*nodo_padre).first < entrada.first)
+        arbolb.insert_right(nodo_padre, aux);
+      else
+        arbolb.insert_left(nodo_padre, aux);
+    }
+  }
+  else // Sustituimos la etiqueta para esa clave
+    (*n).second = entrada.second;
+}
+
+template <typename Key, typename T>
+typename BST<Key, T>::const_iterator BST<Key, T>::find(const Key & clave) const
+{
+  pair<Key, T> e;
+  typename bintree<pair<Key, T> >::node nodo, nodo_padre;
+
+  e.first = clave;
+
+  bool encontrado = encontrar(e, nodo, nodo_padre);
+
+  if (encontrado)
+    const_iterator(nodo);
+
+  return end();
+}
+
+
+template <class Key, class T>
+void BST<Key, T>::borrar_nodo(
+  typename bintree<typename BST<Key, T>::entry>::node nodo,
+  typename bintree<typename BST<Key, T>::entry>::node nodo_padre)
+{
+  typename bintree<typename BST<Key, T>::entry>::node nodo_nulo=
+    bintree<typename BST<Key, T>::entry>::node();
+
+  if (nodo.left()==nodo_nulo && nodo.right()==nodo_nulo) {
+    bintree<typename BST<Key, T>::entry> Taux;
+    if (nodo_padre == nodo_nulo)
+      arbolb.clear();
+    else {
+      if (nodo_padre.left()==nodo)
+        arbolb.prune_left(nodo_padre, Taux);
+      else
+        arbolb.prune_right(nodo_padre, Taux);
+    }
+  }
+  else { // 1 ó 2 hijos
+    if (nodo.left()!=nodo_nulo &&
+        nodo.right()!=nodo_nulo) {
+      typename bintree<typename BST::entry>::node aux= nodo.left();
+      while (aux.right()!=nodo_nulo)
+        aux = aux.right();
+      *nodo = *aux;
+      borrar_nodo(aux, aux.parent());
+    }
+    else { // 1 hijo
+      bintree<typename BST::entry> Taux, Taux2;
+      if (nodo.left()!=nodo_nulo)
+        arbolb.prune_left(nodo, Taux);
+      else
+        arbolb.prune_right(nodo, Taux);
+
+      if (nodo_padre == nodo_nulo)
+        arbolb = Taux;
+      else {
+        if (nodo_padre.left()==nodo) {
+          arbolb.prune_left(nodo_padre, Taux2);
+          arbolb.insert_left(nodo_padre, Taux);
+        }
+        else {
+          arbolb.prune_right(nodo_padre, Taux2);
+          arbolb.insert_right(nodo_padre, Taux);
+        }
+      }
+    }
+  }
+}
+
+template <class Key, class T>
+typename BST<Key, T>::const_iterator BST<Key, T>::erase(const Key & clave)
+{
+  typename bintree<typename BST<Key, T>::entry>::node nodo, nodo_padre;
+
+  typename BST<Key, T>::entry e;
+  e.clave = clave;
+
+  bool encontrado = encontrar(e, nodo, nodo_padre);
+  if (encontrado)
+    borrar_nodo(nodo, nodo_padre);
+
+  return encontrado;
+}
+
+
+template <class Key, class T>
+inline 
+typename BST<Key, T>::size_type BST<Key, T>::size() const
+{
+  return arbolb.size();
+}
+
+template <class Key, class T>
+inline
+typename BST<Key, T>::const_iterator BST<Key, T>::begin() const
+{
+  const_iterator ite (arbolb.begin_inorder());
+  return ite;
+}
+
+template <class Key, class T>
+inline 
+typename BST<Key, T>::const_iterator BST<Key, T>::end() const
+{
+  const_iterator ite (arbolb.end_inorder());
+  return ite;
+}
+
+#ifdef ITERATOR_BST
+template <class Key, class T>
+inline
+typename BST<Key, T>::iterator BST<Key, T>::begin()
+{
+  iterator ite (arbolb.begin_inorder());
+  return ite;
+}
+
+template <class Key, class T>
+inline 
+typename BST<Key, T>::iterator BST<Key, T>::end()
+{
+  iterator ite (arbolb.end_inorder());
+  return ite;
+}
+#endif
+
+template <class Key, class T>
+inline 
+BST<Key, T>::~BST()
+{
+}
+
+template <class Key, class T>
+inline 
+BST<Key, T>::const_iterator::const_iterator()
+{
+}
+
+template <class Key, class T>
+inline 
+BST<Key, T>::const_iterator::const_iterator(const typename BST<Key, T>::const_iterator & i)
+  : eliterador(i.eliterador)
+{
+}
+
+
+template <class Key, class T>
+inline 
+BST<Key, T>::const_iterator::const_iterator(const typename bintree<pair<Key, T> >::const_inorder_iterator & i)
+  : eliterador(i)
+{
+}
+
+template <class Key, class T>
+inline 
+typename BST<Key, T>::const_iterator& BST<Key, T>::const_iterator::operator++()
+{
+  ++eliterador;
+  return *this;
+}
+
+template <class Key, class T>
+inline pair<Key, T> BST<Key, T>::const_iterator::operator*() const
+{
+  return *eliterador;
+}
+
+
+template <class Key, class T>
+inline 
+bool BST<Key, T>::const_iterator::operator==(const BST<Key, T>::const_iterator &i) const
+{
+  return eliterador == i.eliterador;
+}
+
+template <class Key, class T>
+inline 
+bool BST<Key, T>::const_iterator::operator!=(const BST<Key, T>::const_iterator &i) const
+{
+  return eliterador != i.eliterador;
+}
+
+template <class Key, class T>
+inline 
+typename BST<Key, T>::const_iterator & 
+BST<Key, T>::const_iterator::operator=(const BST<Key, T>::const_iterator &i)
+{
+  eliterador = i.eliterador;
+  return *this;
+}
+
+
+
+#ifdef ITERATOR_BST
+
+template <class Key, class T>
+inline 
+BST<Key, T>::iterator::iterator()
+{
+}
+
+template <class Key, class T>
+inline 
+BST<Key, T>::iterator::iterator(const typename BST<Key, T>::iterator & i)
+  : eliterador(i.eliterador)
+{
+}
+
+
+template <class Key, class T>
+inline 
+BST<Key, T>::iterator::iterator(const typename bintree<pair<Key, T> >::inorder_iterator & i)
+  : eliterador(i)
+{
+}
+
+template <class Key, class T>
+inline 
+typename BST<Key, T>::iterator& BST<Key, T>::iterator::operator++()
+{
+  ++eliterador;
+  return *this;
+}
+
+template <class Key, class T>
+inline pair<Key, T> BST<Key, T>::iterator::operator*()
+{
+  return *eliterador;
+}
+
+
+template <class Key, class T>
+inline 
+bool BST<Key, T>::iterator::operator==(const BST<Key, T>::iterator &i) const
+{
+  return eliterador == i.eliterador;
+}
+
+template <class Key, class T>
+inline 
+bool BST<Key, T>::iterator::operator!=(const BST<Key, T>::iterator &i) const
+{
+  return eliterador != i.eliterador;
+}
+
+template <class Key, class T>
+inline 
+typename BST<Key, T>::iterator & 
+BST<Key, T>::iterator::operator=(const BST<Key, T>::iterator &i)
+{
+  eliterador = i.eliterador;
+  return *this;
+}
+#endif

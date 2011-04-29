@@ -1,0 +1,336 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0073)http://decsai.ugr.es/edatos/practicas_c0506/practica4/guion_p4_c0506.html -->
+<HTML><HEAD><TITLE>Practica 4: Códigos de Huffman</TITLE>
+<META http-equiv=content-type content="text/html; charset=ISO-8859-1">
+<META content="MSHTML 6.00.2900.2873" name=GENERATOR></HEAD>
+<BODY>
+<DIV style="TEXT-ALIGN: center"><BIG><BIG><BIG><SPAN 
+style="FONT-WEIGHT: bold">ESTRUCTURAS DE DATOS<BR><SMALL>PRACTICA 
+4</SMALL><BR></SPAN></BIG></BIG></BIG></DIV><BR><BR><SPAN 
+style="FONT-WEIGHT: bold">TÍTULO: ALGORITMOS DE CODIFICACIÓN / 
+DECODIFICACIÓN<BR><BR>Objetivos:<BR></SPAN>Desarrollar algoritmos para la 
+compresión/decompresión de datos utilizando la codificación de Huffman (ver <A 
+href="http://es.wikipedia.org/wiki/CodificaciÃ³n_Huffman">http://es.wikipedia.org/wiki/CodificaciÃ³n_Huffman</A> 
+para mas información). <BR><BR>
+<P>Extracto de Wikipedia:<BR>"En las <A title="Ciencias de la computación" 
+href="http://es.wikipedia.org/wiki/Ciencias_de_la_computaciÃ³n">Ciencias de la 
+computación</A>, la <B>Codificación Huffman</B> es una <A title=Codificación 
+href="http://es.wikipedia.org/wiki/CodificaciÃ³n">codificación</A> utilizada 
+para <A title="Compresión de datos" 
+href="http://es.wikipedia.org/wiki/CompresiÃ³n_de_datos">compresión de 
+datos</A>, desarrollada por <A class=new title="David A. Huffman" 
+href="http://es.wikipedia.org/w/index.php?title=David_A._Huffman&amp;action=edit">David 
+A. Huffman</A> en <A title=1952 
+href="http://es.wikipedia.org/wiki/1952">1952</A>, y publicada en <I><A 
+class="external text" 
+title=http://compression.graphicon.ru/download/articles/huff/huffman_1952_minimum-redundancy-codes.pdf 
+href="http://compression.graphicon.ru/download/articles/huff/huffman_1952_minimum-redundancy-codes.pdf" 
+rel=nofollow>A Method for the Construction of Minimum-Redundancy 
+Codes</A></I>.</P>
+<P>Un código de Huffman es un <A class=new title="Código de longitud variable" 
+href="http://es.wikipedia.org/w/index.php?title=C%C3%B3digo_de_longitud_variable&amp;action=edit">código 
+de longitud variable</A>, en el que la longitud de cada código depende de la 
+frecuencia relativa de aparición de cada símbolo en un texto: cuanto más 
+frecuente sea un símbolo, su código asociado será más corto. Además, un código 
+Huffman es un código libre de prefijos: es decir, ningún código forma la primera 
+parte de otro código; esto permite que los mensajes codificados sean no 
+ambiguos.</P>
+<P>Este es el codificador estadístico más popular, y érroneamente se tiende a 
+pensar que su funcionamiento es óptimo...."<BR></P><BR><SPAN 
+style="FONT-WEIGHT: bold">Tareas a realizar:</SPAN><BR><BR>El alumno deberá 
+entregar los códigos necesarios para generar tres ejecutables, <BR><BR>
+<OL>
+  <LI><SPAN style="FONT-WEIGHT: bold">codifica</SPAN> que toma como entrada un 
+  fichero texto y genera el fichero codificado &nbsp;&nbsp;&nbsp; 
+  Ejemplo:<BR>&nbsp;&nbsp;&nbsp; codifica&nbsp; datos.txt &gt;datos.huf<BR>
+  <LI><SPAN style="FONT-WEIGHT: bold">decodifica_lineal</SPAN> que toma como 
+  entrada un fichero codificado y genera el fichero 
+  original<BR>&nbsp;&nbsp;&nbsp; Ejemplo:<BR>&nbsp;&nbsp;&nbsp; 
+  decodifica_lineal&nbsp;&nbsp; datos.huf &gt;datos.txt <BR>
+  <LI><SPAN style="FONT-WEIGHT: bold">decodifica_abinario</SPAN> que toma como 
+  entrada un fichero codificado y genera el fichero 
+  original<BR>&nbsp;&nbsp;&nbsp; Ejemplo:<BR>&nbsp;&nbsp;&nbsp; 
+  decodifica_abinario datos.huf &gt;datos.txt<BR>&nbsp;&nbsp;&nbsp; 
+  <BR>&nbsp;&nbsp;&nbsp; donde decodifica_lineal o decodifica_abinario difieren 
+  de la representación interna que se utilice para el código de Huffman.&nbsp; 
+  </LI></OL><BR><BR><SPAN style="FONT-WEIGHT: bold">Resolución de los problemas 
+planteados</SPAN><BR><BR>&nbsp;&nbsp;&nbsp; Se plantean dos problemas distintos 
+que se resuelven de forma independiente, la codificación y la decodificación. 
+Pasemos a ver cada uno de ellos.<BR>
+<UL>
+  <LI>&nbsp; <SPAN style="FONT-WEIGHT: bold">CODIFICACION: </SPAN>Para esta 
+  primera parte de la practica el alumno deberá de hacer dos pasadas sobre el 
+  fichero de entrada (asumimos un fichero de texto, aunque es directa su 
+  generalización). Al final de esta página el alumno encontrará un <A 
+  href="http://decsai.ugr.es/edatos/practicas_c0506/practica4/guion_p4_c0506.html#EJEMPLO_CODIGO_LECTURA">ejemplo 
+  de codigo</A> que ilustra como realizar estas lecturas. </LI></UL><BR>
+<OL>
+  <LI>- La primera pasada se utiliza para contar la frecuencia de aparición de 
+  cada caracter:&nbsp; El alumno deberá utilizar una estructura adecuada para 
+  realizar dicha tarea, por ejemplo un map o diccionario. Esta información es 
+  necesaria para determinar la codificación asociada a cada caracter.<BR>
+  <LI style="TEXT-ALIGN: center">
+  <DIV style="TEXT-ALIGN: left">- La segunda pasada es utilizada para codificar 
+  el texto: Una vez que se tiene el código de Huffman asociado a cada caracter o 
+  símbolo de entrada , se sustituye dicho caracter por su codificación en la 
+  salida.</DIV></LI></OL>
+<DIV style="TEXT-ALIGN: left">Para obtener la codificación partimos del conjunto 
+de frecuencias asociadas a cada caracter y haciendo uso de las estructuras 
+adecuadas las procesamos como se indica:<BR></DIV>
+<OL>
+  <LI style="TEXT-ALIGN: center"><BR></LI></OL>
+<LI style="TEXT-ALIGN: center">
+<TABLE 
+style="MARGIN-LEFT: auto; WIDTH: 435px; MARGIN-RIGHT: auto; HEIGHT: 181px; TEXT-ALIGN: left" 
+cellSpacing=2 cellPadding=2 border=2>
+  <TBODY>
+  <TR>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">Caracter<BR></TD>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">Frecuencia<BR></TD>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">Código 
+  Huffman<BR></TD></TR>
+  <TR>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">a<BR></TD>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">10<BR></TD>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">010<BR></TD></TR>
+  <TR>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">b<BR></TD>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">20<BR></TD>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">10<BR></TD></TR>
+  <TR>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">c<BR></TD>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">30<BR></TD>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">00<BR></TD></TR>
+  <TR>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">d<BR></TD>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">25<BR></TD>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">11<BR></TD></TR>
+  <TR>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">e<BR></TD>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">10<BR></TD>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">0110<BR></TD></TR>
+  <TR>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">f<BR></TD>
+    <TD style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">5<BR></TD>
+    <TD 
+style="VERTICAL-ALIGN: top; TEXT-ALIGN: center">0111<BR></TD></TR></TBODY></TABLE><BR><BR><BR>Necesitamos 
+de dos estructuras, la primera una cola con prioridad del tipo<BR><BR>
+<DIV style="TEXT-ALIGN: center"><SPAN 
+style="FONT-STYLE: italic">priority_queue&lt;pair&lt;int,list&lt;char&gt; &gt; 
+Q.</SPAN><BR></DIV><BR>donde la primera componente del par representa un valor 
+de frecuencia y la segunda componente representa una lista de caracteres 
+asociados a dicha frecuencia. Inicialmente Q contendría los caracteres con su 
+frecuencia de ocurrencia asociada, donde el elemento que está en el tope es el 
+de menor frecuencia. (Sólo a nivel lustrativo representaremos la cola con 
+prioridad como un vector ordenado).<BR><BR>esto es Q= 
+[&lt;5,f&gt;,&lt;10,e&gt;,&lt;10,a&gt;,&lt;20,b&gt;,&lt;25,d&gt;,&lt;30,c&gt;]<BR><BR>Ademas, 
+tendremos un tipo de dato abstracto, llamado <SPAN 
+style="FONT-WEIGHT: bold; FONT-STYLE: italic">codigo_huffman</SPAN>,&nbsp; que 
+gestionará el código de Huffman que debe permitir almacenar y gestionar 
+pares&nbsp; &lt;char,list&lt;bits&gt; &gt; , donde&nbsp; el primer elemento se 
+corresponde con el caracter y el segundo con una lista de <SPAN 
+style="FONT-STYLE: italic">bits </SPAN>que representaría la codificación 
+binaria. Un <SPAN style="FONT-STYLE: italic">bit</SPAN> es un TDA que permite 
+representar valores 0 o 1. Para simplicar, podemos considerar un bit como un 
+booleano, es decir, consideraremos la definición<BR>
+<DIV style="TEXT-ALIGN: center">&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+&nbsp;&nbsp;&nbsp; <SPAN style="FONT-STYLE: italic">typedef bool 
+bit</SPAN>.&nbsp; <BR></DIV><BR>Inicalmente debemos partir del conjunto de todos 
+los caracteres y su codificacion como vacia<BR><BR>C= [&lt;a, &gt;,&lt;b, &gt;, 
+&lt;c, &gt;,&lt;d, &gt;,&lt;e, &gt;, &lt;f, &gt;]<BR><BR>Para obtener los 
+códigos asociados, se procede de forma iterativa donde, en cada paso, se sacan 
+los dos valores (pares) en el tope de Q, los menos frecuentes, y se procede a 
+agruparlos en un unico par que es introducido en la cola. La frecuencia asociada 
+será la suma de las frecuencias de los dos pares que estaban en el tope de la 
+cola.<BR><BR>Además debemos asignar una parte del código de Huffman a los 
+valores que estaban en el tope de Q, (al uno le asignamos un 1 y al otro un 0) 
+Para ello, es suficiente con insertar al principio de la lista asociada a cada 
+caracter del contenedor C el bit (0 o 1)<BR><BR>Este proceso se reitera hasta 
+que la cola tenga un único elemento<BR><BR>iteración 1:<BR>Q= 
+[&lt;10,a&gt;,&lt;15,fe&gt;,&lt;20,b&gt;,&lt;25,d&gt;,&lt;30,c&gt;]<BR>C= 
+[&lt;a, &gt;,&lt;b, &gt;, &lt;c, &gt;,&lt;d, &gt;,&lt;e, 0&gt;, &lt;f, 
+1&gt;]<BR><BR>iteración 2:<BR>Q= 
+[&lt;25,fea&gt;,&lt;30,c&gt;,&lt;45,db&gt;]<BR>C= [&lt;a,0 &gt;,&lt;b,0 &gt;, 
+&lt;c, &gt;,&lt;d,1 &gt;,&lt;e, 10&gt;, &lt;f, 11&gt;]<BR><BR>iteración 3:<BR>Q= 
+[&lt;50,cfea&gt;,&lt;45,db&gt;]<BR>C= [&lt;a,10 &gt;,&lt;b,0 &gt;, &lt;c,0 
+&gt;,&lt;d,1 &gt;,&lt;e, 110&gt;, &lt;f, 111&gt;]<BR><BR>iteración 4:<BR>Q= 
+[&lt;95,cfeadb&gt;]<BR>C= [&lt;a,010 &gt;,&lt;b,10 &gt;, &lt;c,00 &gt;,&lt;d,11 
+&gt;,&lt;e, 0110&gt;, &lt;f, 0111&gt;]<BR><BR>&nbsp; En este momente, en el 
+contenedor C tenemos el código de Huffman.<BR><BR>&nbsp;Una vez generado, 
+debemos&nbsp; leer el texto (la segunda pasada sobre el fichero) de forma que 
+sustituimos cada caracter por su código en&nbsp; el fichero salida. Además, al 
+comienzo del fichero salida debemos de almacenar la codificacion utilizada para 
+el fichero. El código debe presentarse ordenado lexicográficamente segun el 
+conjunto de&nbsp; caracteres o símbolos que se codifican <BR><BR>Por ejemplo, si 
+nuestra entrada es<BR><BR>abaabc....<BR><BR>y considerando las frecuencias del 
+ejemplo anterior, la salida debe ser <BR><BR>6 <BR>a 010<BR>b 10<BR>c 00<BR>d 
+11<BR>e 0110<BR>f 0111<BR>010100100101000....<BR><BR>Donde el primer dígito 
+representa el numero de caracteres distintos que aparece en el texto.<BR><BR>
+<UL>
+  <LI><SPAN style="FONT-WEIGHT: bold">DECODIFICACIÓN:</SPAN> Pasemos a ver la 
+  segunda parte de la practica </LI></UL><BR>
+<DIV style="MARGIN-LEFT: 40px">Se deben implementar dos mecanismos de 
+decodificiación, que básicamente difieren en el TDA utilizado para representar 
+el código de Huffman. <BR></DIV><BR>
+<DIV style="MARGIN-LEFT: 40px">2.1 Estructura Lineal: <BR></DIV><BR>En este 
+caso,&nbsp; el codigo del fichero (<SPAN 
+style="FONT-STYLE: italic">fentrada.huf</SPAN>) lo almacenamos en una estructura 
+ordenada (considerar orden lexicográfico de la codicación binaria). Por tanto, 
+si consdieramos el ejemplo anterior tendríamos el siguiente orden <BR><BR>c 00 
+<BR>a 010<BR>e 0110<BR>f 0111<BR>b 10<BR>d 11<BR><BR>Para pasar a decodificar 
+leemos uno a uno los "bits" del fichero 
+codificado<BR><BR>010100100101000....<BR><BR>En este caso el primero es un 0, 
+busco en la estructura el primer y último símbolo que empiezan por 0 (p y l, 
+respectivamente) <BR><BR><BR>c 00&nbsp; &lt;--- p<BR>a 010<BR>e 0110<BR>f 0111 
+&lt;---l<BR>b 10<BR>d 11<BR><BR>Leemos el siguiente caracter, un 1 en el 
+ejemplo, y dentro del intervalo delimitado por p y l anterior buscamos el 
+subintervalo que contienen&nbsp; el primer y ultimo simbolo que tiene como 
+segundo caracter un 1<BR><BR>c 00&nbsp; <BR>a 010&nbsp; &lt;--- p<BR>e 0110<BR>f 
+0111 &lt;---l<BR>b 10<BR>d 11<BR><BR>Seguimos leyendo el 0, y vemos que ambos 
+indices se cruzan, en este momento podemos decidir que el caracter que se 
+corresponde es el a<BR><BR>c 00&nbsp; <BR>a 010&nbsp; &lt;--- p,l<BR>e 0110<BR>f 
+0111 <BR>b 10<BR>d 11<BR><BR>y se procede a escribir dicho caracter, 'a', en la 
+salida estándar. El proceso se repite hasta que todos los caracteres hayan sido 
+decodificados.<BR><BR><BR>2.2- Utilizar un árbol binario para representar la 
+codificación:&nbsp; Se trabajaría con un árbol binario donde los nodos internos 
+(o mejor dicho, &nbsp; las ramas izquierda y derecha) representarian un valor 0 
+y 1 (respectivamente)y los nodos hojas los caracteres<BR><BR>El siguiente árbol 
+muestra una codificación de parte del código obtenido en el ejemplo 
+anterior.<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+&nbsp; &nbsp;&nbsp; &nbsp; 
+x<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+0/ &nbsp;&nbsp;&nbsp;&nbsp; 
+\1<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+x&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; 
+x<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+0/ &nbsp; \1 &nbsp; 0/ &nbsp; 
+\1<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+... x &nbsp; &nbsp; b&nbsp; &nbsp; &nbsp; 
+d<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+0/&nbsp;&nbsp; 
+\1<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+a&nbsp;&nbsp;&nbsp;&nbsp; x<BR><BR>&nbsp; Con esta estructura, el proceso de 
+decodificación implica el descender por el arbol hasta alcanzar las 
+hojas.<BR><BR>Así, si leemos&nbsp; la 
+secuencia<BR>&nbsp;<BR>010100100101000....<BR><BR>El primer 0 nos dirige hacia 
+la rama izquierda del árbol (etiquetada con 0). Al leer el segundo caracter, un 
+1, nos dirigimos hacia la rama derecha y al leer el tercer caracter, un 0, nos 
+dirigimos hacia la rama izquierda. En este caso, hemos alcanzado un nodo hoja y 
+podemos determinar que el 010 se corresponden&nbsp; con el caracter 'a'. Ahora 
+nos situamos de nuevo en la raíz del árbol y leemos el siguiente caracter , y 
+nos movemos a la rama derecha, como no es hoja leemos el siguiente caracter, 
+un&nbsp; 0, y nos movemos a la rama izquierda que al ser hoja nos indica que 
+debemos de decodificarlo por el caracter 'b'. <BR><BR>El proceso se repite hasta 
+que todos los caracteres hayan sido decodificados.<BR><BR><SPAN 
+style="FONT-WEIGHT: bold">Ficheros a entregar:</SPAN><BR>
+<UL>
+  <LI style="FONT-WEIGHT: bold; FONT-STYLE: italic">codigo_huffman.h 
+  <UL>
+    <LI style="FONT-WEIGHT: bold; FONT-STYLE: italic">// <SPAN 
+    style="FONT-WEIGHT: normal">Especificación de la clase encargada de realizar 
+    la codificiación </SPAN><BR></LI></UL>
+  <LI style="FONT-WEIGHT: bold; FONT-STYLE: italic">codigo_huffman.cpp 
+  <UL>
+    <LI style="FONT-WEIGHT: bold; FONT-STYLE: italic"><SPAN 
+    style="FONT-WEIGHT: normal">// Implementación de la clase</SPAN><BR></LI></UL>
+  <LI style="FONT-WEIGHT: bold; FONT-STYLE: italic">decodigo_huffman.h 
+  <UL>
+    <LI style="FONT-WEIGHT: bold; FONT-STYLE: italic"><SPAN 
+    style="FONT-WEIGHT: normal">//Especificación de la clase encargada de 
+    realizar la decodificación</SPAN><BR></LI></UL>
+  <LI style="FONT-WEIGHT: bold; FONT-STYLE: italic">decodigo_huffman_lineal.cpp 
+  <UL>
+    <LI style="FONT-WEIGHT: bold; FONT-STYLE: italic"><SPAN 
+    style="FONT-WEIGHT: normal">//Implementación de la clase utilizando una 
+    estructura lineal</SPAN><BR></LI></UL>
+  <LI style="FONT-WEIGHT: bold; FONT-STYLE: italic">decodigo_huffman_binario.cpp 
+
+  <UL>
+    <LI style="FONT-WEIGHT: bold; FONT-STYLE: italic"><SPAN 
+    style="FONT-WEIGHT: normal">//Implementación de la clase utilizando una 
+    estructura gerárquica (árbol binario)</SPAN><BR></LI></UL>
+  <LI style="FONT-STYLE: italic"><SPAN 
+  style="FONT-WEIGHT: bold">codificar.cpp</SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  <BR>
+  <UL>
+    <LI style="FONT-STYLE: italic">&nbsp;// Contiene el main encargado de 
+    generar la codificación del fichero &nbsp;&nbsp;&nbsp; <BR></LI></UL>
+  <LI><SPAN style="FONT-STYLE: italic"><SPAN 
+  style="FONT-WEIGHT: bold">decodificar.cpp&nbsp;&nbsp;&nbsp;&nbsp;</SPAN>&nbsp;&nbsp; 
+  <BR></SPAN>
+  <UL>
+    <LI><SPAN style="FONT-STYLE: italic">// Contiene el main engargado de 
+    realizar la decodificación, debe ser el mismo independientemente de si se 
+    utilizan una decodificacion lineal o&nbsp; con árboles binarios.&nbsp; 
+    </SPAN><SPAN style="FONT-STYLE: italic"></SPAN></LI></UL></LI></UL>Así por 
+ejemplo para codificar debemos de&nbsp; realizar:<SPAN 
+style="FONT-STYLE: italic"><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; g++ -o codifica 
+codigo_huffman.o codificar.o<BR><BR></SPAN>y para decodificicar tenemos dos 
+alternativas<SPAN style="FONT-STYLE: italic"><BR><BR>&nbsp;&nbsp;&nbsp; g++ -o 
+decodifica_lineal decodificar.o decodigo_huffman_lineal.o<BR>&nbsp;<BR></SPAN>o 
+bien <SPAN style="FONT-STYLE: italic"><BR><BR>&nbsp;&nbsp;&nbsp; g++ -o 
+decodifica_abinario deco</SPAN><SPAN style="FONT-STYLE: italic"><SPAN 
+style="FONT-STYLE: italic">dificar.o 
+decodigo_huffman_binario.o</SPAN><BR></SPAN><BR><SPAN 
+style="FONT-WEIGHT: bold">Notas</SPAN>:<BR>La clase <SPAN 
+style="FONT-WEIGHT: bold">codigo_huffman</SPAN> debe contener, entre otros, al 
+menos los siguientes métodos así como estar dotado de un iterador para poder 
+estudiar los distintos elementos del código (el operator* sobre el iterador 
+obtendrá el par caracter-código):<BR><BR>
+<UL>
+  <UL>
+    <LI><SPAN style="FONT-STYLE: italic">codigo_huffman(const map&lt;char,int 
+    &gt; &amp; mf);</SPAN>&nbsp; // Constructor que se encarga de generar la 
+    codificación a partir de una mapa de frecuencias. 
+    <LI><SPAN style="FONT-STYLE: italic">pair&lt;list&lt;bits&gt;,bool&gt; 
+    devolver_codigo( char c) const;</SPAN> // Devuelve el código de Huffman 
+    asociado al caracter c. El valor de la segunda componente del par es true si 
+    el código existe y false en caso contrario. 
+    <LI><SPAN style="FONT-STYLE: italic">pair&lt;char,bool&gt; 
+    devolver_caracter(const list&lt;bit&gt; &amp; cd) const;</SPAN> // Devuelve 
+    el caracter asociado a un código de huffman. El valor de la segunda 
+    componente del par es true si el código existe y false en caso 
+contrario.<BR>
+    <LI style="FONT-STYLE: italic">codigo_huffman::iterator begin(); //Devuelve 
+    un iterador al primer elemento del código<BR>
+    <LI><SPAN style="FONT-STYLE: italic">codigo_huffman::iterator end(); 
+    </SPAN>// Devuelve la posicion fin del código </LI></UL></UL>y la clase <SPAN 
+style="FONT-WEIGHT: bold">decodigo_huffman</SPAN> contiene, entre otros,&nbsp; 
+los siguientes métodos<BR>
+<UL>
+  <UL>
+    <LI><SPAN style="FONT-STYLE: italic">insertar_codigo(const 
+    pair&lt;char,list&lt;bits&gt; &gt; &amp; c);</SPAN> // Insertar un caracter 
+    y su codificación en el código. 
+    <LI>&nbsp;<SPAN style="FONT-STYLE: italic">pair&lt;char,bool&gt; decodifica( 
+    bit actual ) const;&nbsp; </SPAN>//&nbsp; decodifica un conjunto de bits, 
+    donde actual representa el bit (valor 0/1) del fichero de entrada que se 
+    esta procesando en este momento. Devuelve un par donde el componente segundo 
+    es false si aun no se ha concluido la codificación (no se ha identificado el 
+    caracter correspondiente) o bien devuelve true cuando se ha alcanzado la 
+    decodificiación, en este caso además la primera componente del par tomará el 
+    valor de caracter decodificado. </LI></UL></UL><BR><BR><SPAN 
+style="FONT-WEIGHT: bold">FECHA DE 
+ENTREGA</SPAN><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<BR>La fecha de entrega de la práctica es el día 9 de Junio de 2006.<BR><BR>
+<UL>
+  <LI>&nbsp;<A name=EJEMPLO_CODIGO_LECTURA></A><SPAN 
+  style="FONT-WEIGHT: bold">EJEMPLO CODIGO LECTURA</SPAN> </LI></UL><BR>#include 
+&lt;iostream&gt;<BR>#include &lt;fstream&gt;<BR>#include 
+&lt;string&gt;<BR><BR>using namespace std;<BR><BR>void Leer_fichero(char 
+*nombre)<BR>&nbsp; <BR>{<BR>&nbsp; ifstream f_entrada; //Fichero Base 
+Datos;<BR>&nbsp; char c;<BR>&nbsp;<BR>&nbsp; 
+f_entrada.open(nombre);<BR><BR>&nbsp; cout &lt;&lt; "Leyendo fichero " &lt;&lt; 
+nombre &lt;&lt; endl;<BR>&nbsp; while (f_entrada){<BR><BR>&nbsp;&nbsp;&nbsp; 
+f_entrada.get(c);&nbsp; //lee caracter del fichero de 
+entrada<BR>&nbsp;&nbsp;&nbsp; cout &lt;&lt; c;&nbsp;&nbsp; // procesamos 
+caracter<BR>&nbsp;&nbsp;&nbsp; }&nbsp; ;//&nbsp; final de 
+fichero<BR><BR><BR>&nbsp;&nbsp; 
+f_entrada.close();<BR>}<BR><BR>&nbsp;&nbsp;&nbsp; &nbsp; <BR>int main(int argc, 
+char **argv){<BR>&nbsp; if (argc!=2) {<BR>&nbsp;&nbsp;&nbsp; cout &lt;&lt; 
+"Formato: codifica f_entrada &gt;fsalida.huf" &lt;&lt; 
+endl;<BR>&nbsp;&nbsp;&nbsp; exit(0);<BR>&nbsp; 
+}<BR><BR>&nbsp;Leer_fichero(argv[1]);&nbsp; // Primera pasada al 
+fichero<BR>&nbsp;cout &lt;&lt; "Segunda lectura" &lt;&lt; 
+endl;<BR>&nbsp;Leer_fichero(argv[1]);&nbsp; // Segunda pasada al 
+fichero<BR>}<BR><BR><BR><BR></LI></BODY></HTML>

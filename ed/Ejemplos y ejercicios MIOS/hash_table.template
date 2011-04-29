@@ -1,0 +1,181 @@
+template <class KeyClass, class DefClass>
+int hash_table<KeyClass,DefClass>::funcion_hash(KeyClass dato, int intento) const
+{
+  return (dato + intento-1) % tabla.size();
+}
+
+template <class KeyClass, class DefClass>
+void hash_table<KeyClass,DefClass>::realizar_rehashing()
+{
+  int M_antiguo = tabla.capacity();
+
+  // Habr� que garantizar que es primo!!
+  int M = M_antiguo*2+1;
+  vector<casillas> tabla_antigua= tabla;
+  tabla = vector<casillas>(M); // Todo nulo
+
+  for (int i= 0; i<M_antiguo; i++)
+    if (tabla_antigua[i].estado == OCUPADA)
+      insert(tabla_antigua[i].dato);
+}
+
+template <class KeyClass, class DefClass>
+hash_table<KeyClass,DefClass>::hash_table(int tama) : tabla(tama)
+{
+  num_datos = 0;
+}
+
+template <class KeyClass, class DefClass>
+hash_table<KeyClass,DefClass>::hash_table(const hash_table &th) :
+  tabla(th.tabla)
+{
+  num_datos = th.num_datos;
+}
+
+template <class KeyClass, class DefClass>
+void hash_table<KeyClass,DefClass>::insert(const pair<KeyClass, DefClass> &dato)
+{
+  if (num_datos>=tabla.size())
+    realizar_rehashing();
+
+  int casilla = funcion_hash(dato.first, 1);
+  int intento = 1;
+  bool terminar = false;
+
+  // Insertamos si no aparece ya
+  while (!terminar)
+    if ((tabla[casilla].estado==OCUPADA && tabla[casilla].dato==dato)
+        || tabla[casilla].estado==LIBRE || tabla[casilla].estado==BORRADA)
+      terminar = true;
+    else {
+      intento++;
+      casilla = funcion_hash(dato.first, intento);
+    }
+  
+  if (tabla[casilla].estado==LIBRE || tabla[casilla].estado==BORRADA) {
+    tabla[casilla].dato= dato;
+    tabla[casilla].estado= OCUPADA;
+    num_datos++;
+  }
+}
+
+template <class KeyClass, class DefClass>
+typename hash_table<KeyClass,DefClass>::const_iterator hash_table<KeyClass,DefClass>::find(const KeyClass &dato) const
+{
+  int casilla = funcion_hash(dato, 1);
+  int intento = 1;
+  bool terminar = false;
+
+  while (!terminar)
+    if (tabla[casilla].estado==OCUPADA && tabla[casilla].dato.first==dato
+        || tabla[casilla].estado==LIBRE)
+      terminar = true;
+    else // Resolver colisi�
+      if (intento==tabla.size())
+        terminar = true;
+      else {
+        intento++;
+        casilla = funcion_hash(dato, intento);
+      }
+
+  const_iterator ite;
+  ite.latabla = &tabla;
+  if (intento<tabla.size() && tabla[casilla].estado!=LIBRE)
+    // Necesariamente se ha encontrado el dato
+    ite.casilla_actual = intento;
+  else
+    ite.casilla_actual = tabla.size();
+  
+  return ite;
+}
+
+template <class KeyClass, class DefClass>
+bool hash_table<KeyClass,DefClass>::erase(const KeyClass &dato)
+{
+  // Se podr� optimizar con rehashing cada cierto nmero de borrados
+  int casilla = funcion_hash(dato, 1);
+  int intento = 1;
+  bool terminar = false;
+
+  while (!terminar) {
+    if (tabla[casilla].estado==OCUPADA && tabla[casilla].dato.first==dato
+                || tabla[casilla].estado==LIBRE)
+      terminar = true;
+    else {
+      intento++;
+      casilla = funcion_hash(dato, intento);
+    }
+  }
+  if (tabla[casilla].estado!=LIBRE) {
+    tabla[casilla].estado= BORRADA;
+    num_datos--;
+
+    return true;
+  }
+
+  return false;
+}
+
+
+template <class KeyClass, class DefClass>
+int hash_table<KeyClass,DefClass>::size() const
+{
+  return num_datos;
+}
+
+template <class KeyClass, class DefClass>
+bool hash_table<KeyClass,DefClass>::empty() const
+{
+  return num_datos==0;
+}
+
+template <class KeyClass, class DefClass>
+hash_table<KeyClass,DefClass>::~hash_table()
+{
+}
+
+
+template <class KeyClass, class DefClass>
+typename hash_table<KeyClass,DefClass>::const_iterator
+  hash_table<KeyClass,DefClass>::begin() const
+{
+  typename hash_table<KeyClass,DefClass>::const_iterator ite;
+  bool terminar = false;
+
+  ite.latabla = &tabla;
+
+  int i = 0;
+  while (!terminar && i<tabla.size())
+    if (tabla[i].estado==OCUPADA)
+      terminar = true;
+    else
+      i++;
+
+  ite.casilla_actual = i;
+
+  return ite;
+}
+
+template <class KeyClass, class DefClass>
+typename hash_table<KeyClass,DefClass>::const_iterator
+  hash_table<KeyClass,DefClass>::end() const
+{
+  typename hash_table<KeyClass,DefClass>::const_iterator ite;
+
+  ite.latabla = &tabla;
+  ite.casilla_actual = tabla.size();
+  return ite;
+}
+
+template <class KeyClass, class DefClass>
+typename hash_table<KeyClass,DefClass>::const_iterator
+  hash_table<KeyClass,DefClass>::const_iterator::operator++()
+{
+  if (casilla_actual<latabla->size())
+    casilla_actual++;
+  while (casilla_actual<latabla->size() &&
+        (*latabla)[casilla_actual].estado!=OCUPADA)
+    casilla_actual++;
+
+  return *this;
+}

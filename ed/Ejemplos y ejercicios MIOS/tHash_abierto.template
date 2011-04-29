@@ -1,0 +1,138 @@
+
+template <class TClave, class TDef>
+int tHash<TClave,TDef>::funcion_hash(TClave dato) const
+{
+  return dato % tabla.size();
+}
+
+template <class TClave, class TDef>
+tHash<TClave,TDef>::tHash(int tama) : tabla(tama)
+{
+}
+
+template <class TClave, class TDef>
+tHash<TClave,TDef>::tHash(const tHash &th) : tabla(th.tabla)
+{
+}
+
+template <class TClave, class TDef>
+void tHash<TClave,TDef>::insertar(TClave dato, TDef elem)
+{
+  typename list<casilla>::iterator p;
+  int casilla = funcion_hash(dato);
+  bool terminar = false;
+
+  // Insertamos de forma ordenada
+  for (p = tabla[casilla].begin(); p!=tabla[casilla].end()
+       && !terminar; ++p)
+    if ((*p).dato>=dato)
+      terminar = true;
+
+  if (p==tabla[casilla].end() || (*p).dato>dato) {
+    tHash<TClave,TDef>::casilla cas;
+    cas.dato = dato;
+    cas.def = elem;
+    tabla[casilla].insertar(p, cas);
+  }
+}
+
+template <class TClave, class TDef>
+bool tHash<TClave,TDef>::borrar(TClave dato)
+{
+  typename list<casilla>::iterator p;
+  int casilla = funcion_hash(dato);
+  bool terminar = false;
+
+  // Los datos están insertados de forma ordenada
+  p = tabla[casilla].begin();
+  while (p!=tabla[casilla].end() && !terminar)
+    if ((*p).dato>=dato)
+      terminar = true;
+    else
+      ++p;
+
+  if (p!=tabla[casilla].end() && (*p).dato==dato) {
+    tabla[casilla].borrar(p);
+    return true;
+  }
+
+  return false;
+}
+
+template <class TClave, class TDef>
+bool tHash<TClave,TDef>::Existe(TClave dato, TDef &elem) const
+{
+  typename list<casilla>::const_iterator p;
+  int casilla = funcion_hash(dato);
+  bool terminar = false;
+
+  // Los datos están insertados de forma ordenada
+  p = tabla[casilla].begin();
+  while (p!=tabla[casilla].end() && !terminar)
+    if (dato<(*p).dato)
+      terminar = true;
+    else
+       ++p;
+
+  if (p!=tabla[casilla].end() && (*p).dato==dato)
+    elem = (*p).def;
+  return (p!=tabla[casilla].end() && (*p).dato==dato);
+}
+
+template <class TClave, class TDef>
+tHash<TClave,TDef>::~tHash()
+{
+}
+
+template <class TClave, class TDef>
+typename tHash<TClave,TDef>::iterator
+  tHash<TClave,TDef>::begin() const
+{
+  typename tHash<TClave,TDef>::iterator ite;
+  bool terminar = false;
+
+  ite.latabla = &tabla;
+
+  // Buscamos una list con algún elemento
+  int i= 0;
+  while (i<tabla.size() && tabla[i].begin()==tabla[i].end())
+    i++;
+
+  ite.list_actual = i;
+  if (i==tabla.size()) // Si no hay ningún elemento en la tabla
+    ite.posicion_actual= tabla[0].end();
+  else
+    ite.posicion_actual= tabla[i].begin();
+
+  return ite;
+}
+
+template <class TClave, class TDef>
+typename tHash<TClave,TDef>::iterator
+  tHash<TClave,TDef>::end() const
+{
+  typename tHash<TClave,TDef>::iterator ite;
+
+  ite.latabla = &tabla;
+  ite.list_actual = tabla.size();
+  ite.posicion_actual = tabla[0].end();
+
+  return ite;
+}
+
+template <class TClave, class TDef>
+typename tHash<TClave,TDef>::iterator
+  tHash<TClave,TDef>::iterator::operator++(int)
+{
+  assert(posicion_actual!=(*latabla)[list_actual].end());
+
+  ++posicion_actual;
+  if (posicion_actual==(*latabla)[list_actual].end()) //Pasamos list sig.
+    do {
+      list_actual++;
+      posicion_actual = (*latabla)[list_actual].begin();
+    } while (list_actual<(*latabla).size() &&
+             posicion_actual==(*latabla)[list_actual].end());
+
+  return *this;
+}

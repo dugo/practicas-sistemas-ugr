@@ -1,0 +1,424 @@
+#include "list.h"
+
+#include <cassert>
+
+/*
+  Funci� de Abstracci�:
+  ----------------------
+  Dado el objeto del tipo rep r, r = {cab, num_elem}, el objeto
+  abstracto al que representa es:
+    l = < r.cab->siguiente->elemento,
+          r.cab->siguiente->siguiente->elemento,
+          ...
+          r.cab->siguiente-> (r.num_elem) ->siguiente->elemento >
+
+  Invariante de Representaci�:
+  ----------------------------
+   -  0 <= r.num_elem
+   -  r.cab->anterior == r.cab->siguiente-> (r.num_elem) ->siguiente->elemento
+   -  Para cualquier posici� p de l:
+      p->siguiente->anterior == p
+      p->anterior->siguiente == p
+ */
+
+
+template <class T>
+list<T>::list()
+{
+  cab = new nodo_lista;
+  assert(cab != 0);
+  cab->siguiente = cab;
+  cab->anterior = cab;
+  num_elem = 0;
+}
+
+
+template <class T>
+list<T>::list(const list<T> & l)
+{
+  num_elem = l.num_elem;
+ 
+  // crear nodo cabecera
+  cab = new nodo_lista;
+  assert(cab != 0);
+  cab->siguiente = cab;
+  cab->anterior = cab;
+ 
+  Posicion p = l.cab->siguiente;
+  while (p != l.cab)
+    {
+      Posicion q = new nodo_lista;
+      assert(q != 0);
+
+      q->elemento = p->elemento;
+      q->anterior = cab->anterior;
+      q->siguiente = cab;
+      cab->anterior->siguiente = q;
+      cab->anterior = q;
+      p = p->siguiente;
+    }
+  num_elem = l.num_elem;
+}
+
+
+template <class T>
+inline bool 
+list<T>::empty() const
+{
+  return num_elem == 0;
+}
+
+
+template <class T>
+inline typename list<T>::size_type
+list<T>::size() const
+{
+  return num_elem;
+}
+
+
+template <class T>
+typename list<T>::iterator 
+list<T>::insert(list<T>::iterator pos, const T & elemento)
+{
+  Posicion q = new nodo_lista;
+  assert(q != 0);
+  q->anterior = pos.eliterador->anterior;
+  q->elemento = elemento;
+  q->siguiente = pos.eliterador;
+  pos.eliterador->anterior = q;
+  q->anterior->siguiente = q;
+  num_elem++;
+
+  return iterator(q);
+}
+
+
+template <class T>
+typename list<T>::iterator 
+list<T>::erase(list<T>::iterator pos)
+{
+  if (pos != end())
+    {
+      Posicion q = pos.eliterador;
+      pos.eliterador->anterior->siguiente =
+        pos.eliterador->siguiente;
+      pos.eliterador->siguiente->anterior =
+        pos.eliterador->anterior;
+      pos.eliterador = q->siguiente;
+      num_elem--;
+      delete q;
+    }
+  return pos;
+}
+
+
+template<class T>
+void
+list<T>::push_front(const T & elemento)
+{
+  insert(begin(), elemento);
+}
+
+
+template<class T>
+void
+list<T>::push_back(const T & elemento)
+{
+  insert(end(), elemento);
+}
+
+
+template<class T>
+void
+list<T>::pop_front()
+{
+  Posicion p = cab->siguiente;
+  cab->siguiente = p->siguiente;
+  cab->siguiente->anterior = cab;
+  delete p;
+  num_elem--;
+}
+
+
+template<class T>
+void
+list<T>::pop_back()
+{
+  Posicion p = cab->anterior;
+  cab->anterior = p->anterior;
+  p->anterior->siguiente = cab;
+  delete p;
+  num_elem--;
+}
+
+
+template <class T>
+bool 
+list<T>::operator==(const list<T> & l) const
+{
+  if (num_elem != l.num_elem)
+    return false;
+ 
+  Posicion p = cab->siguiente;
+  Posicion q = l.cab->siguiente;
+  bool sonIguales = true;
+  while (sonIguales && p != cab)
+    {
+      sonIguales = (p->elemento == q->elemento);
+      p = p->siguiente;
+      q = q->siguiente;
+    }
+  return sonIguales;
+}
+
+template <class T>
+list<T> & 
+list<T>::operator=(const list<T> & l)
+{
+  if (&l != this)
+    {
+      clear();
+      num_elem = l.num_elem;
+      Posicion p = l.cab->siguiente;
+      while (p != l.cab)
+	{
+	  Posicion q = new nodo_lista;
+	  assert(q != 0);
+	  
+	  q->elemento = p->elemento;
+	  q->anterior = cab->anterior;
+	  q->siguiente = cab;
+	  cab->anterior->siguiente = q;
+	  cab->anterior = q;
+	  p = p->siguiente;
+	}
+      num_elem = l.num_elem;
+    }
+  return *this;
+}
+
+
+template <class T>
+void 
+list<T>::clear()
+{
+  if (!empty())
+    {
+      Posicion p = cab->siguiente;
+      while (p != cab)
+        {
+          Posicion q = p;
+          p = p->siguiente;
+          delete q;
+        }
+    }
+  cab->siguiente = cab;
+  cab->anterior = cab;
+  num_elem = 0;
+}
+
+
+template <class T>
+inline T &
+list<T>::front()
+{
+  return cab->siguiente->elemento;
+}
+
+
+template <class T>
+inline const T & 
+list<T>::front() const
+{
+  return cab->siguiente->elemento;
+}
+
+
+template <class T>
+inline T &
+list<T>::back()
+{
+  return cab->anterior->elemento;
+}
+
+template <class T>
+inline const T & 
+list<T>::back() const
+{
+  return cab->siguiente->elemento;
+}
+
+
+
+template <class T>
+list<T>::~list()
+{
+  if (!empty())
+    clear();
+  delete cab;
+}
+
+
+template <class T>
+inline typename list<T>::iterator 
+list<T>::begin()
+{
+  return iterator(cab->siguiente);
+}
+
+
+template <class T>
+inline typename list<T>::iterator 
+list<T>::end()
+{
+  return iterator(cab);
+}
+
+
+template <class T>
+inline typename list<T>::const_iterator 
+list<T>::begin() const
+{
+  return const_iterator(cab->siguiente);
+}
+
+
+template <class T>
+inline typename list<T>::const_iterator 
+list<T>::end() const
+{
+  return const_iterator(cab);
+}
+
+
+
+template <class T>
+inline list<T>::iterator::iterator()
+  : eliterador(0)
+{
+};
+
+
+template <class T>
+inline 
+list<T>::iterator::iterator(const list<T>::iterator & i)
+  : eliterador(i.eliterador)
+{
+};
+
+
+template <class T>
+inline 
+list<T>::iterator::iterator(list<T>::nodo_lista * p)
+  : eliterador(p)
+{
+};
+
+
+template <class T>
+inline T & 
+list<T>::iterator::operator*()
+{
+  return eliterador->elemento;
+}
+
+
+template <class T>
+inline typename list<T>::iterator &
+list<T>::iterator::operator++()
+{
+  //  assert(eliterador != cab);
+
+  eliterador = eliterador->siguiente;
+  return *this;
+}
+
+
+template <class T>
+inline bool 
+list<T>::iterator::operator!=(const list<T>::iterator & i) const
+{
+  return eliterador != i.eliterador;
+}
+
+template <class T>
+inline bool 
+list<T>::iterator::operator==(const list<T>::iterator & i) const
+{
+  return eliterador == i.eliterador;
+}
+
+
+
+////////////////////////////////////////////////////////////
+template <class T>
+inline 
+list<T>::const_iterator::const_iterator()
+  : eliterador(0)
+{
+};
+
+
+template <class T>
+inline 
+list<T>::const_iterator::const_iterator(
+      const list<T>::const_iterator & i)
+  : eliterador(i.eliterador)
+{
+};
+
+
+template <class T>
+inline list<T>::const_iterator::const_iterator(list<T>::nodo_lista * p)
+  : eliterador(p)
+{
+};
+
+
+template <class T>
+inline 
+list<T>::const_iterator::const_iterator(
+	       const list<T>::iterator & i)
+  : eliterador(i.eliterador)
+{
+};
+
+
+template <class T>
+inline T 
+list<T>::const_iterator::operator*() const
+{
+  return eliterador->elemento;
+}
+
+
+template <class T>
+inline typename list<T>::const_iterator & 
+list<T>::const_iterator::operator++()
+{
+  //  assert(eliterador != cab);
+
+  eliterador = eliterador->siguiente;
+  return *this;
+}
+
+
+template <class T>
+inline bool 
+list<T>::const_iterator::operator!=(
+                       const list<T>::const_iterator & i) const
+{
+  return eliterador != i.eliterador;
+}
+
+
+template <class T>
+inline bool 
+list<T>::const_iterator::operator==(
+                     const list<T>::const_iterator & i) const
+{
+  return eliterador == i.eliterador;
+}
+
+

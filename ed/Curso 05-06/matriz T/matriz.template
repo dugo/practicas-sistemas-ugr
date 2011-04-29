@@ -1,0 +1,333 @@
+//fichero matriz.template
+
+using namespace std;
+
+template <class T>
+matriz<T>::matriz(int f, int c)
+{
+  reservar(f,c);
+}
+
+template <class T>
+matriz<T>::matriz(int f, int c, T valor)
+{
+  reservar(f,c);
+
+  for (int i = 0;i<this->nfilas();i++)
+    for (int g=0;g<this->ncols();g++)
+      this->set(i,g,valor);
+}
+
+template <class T>
+matriz<T>::matriz(const matriz<T> & m)
+{
+
+  this->~matriz();
+
+  reservar(m.nfilas(),m.ncols());
+
+  for (int i = 0;i<this->nfilas();i++)
+    for (int g=0;g<this->ncols();g++)
+      this->set(i,g,m.get(i , g));
+}
+
+template <class T>
+matriz<T>::~matriz()
+{
+  for (int i = 0;i<this->nfilas();i++)
+    delete [] items[i];
+
+ // delete [] items;
+
+  this->_filas = 0;
+  this->_cols = 0;
+}
+
+template <class T>
+bool
+matriz<T>::operator==(const matriz<T> & m) const
+{
+  if (this->nfilas()!=m.nfilas())
+    return false;
+
+  if (this->ncols()!=m.ncols())
+    return false;
+
+  int i,g;
+  bool iguales = true;
+  for (i = 0;i < this->nfilas() - 1;i++) {
+    g = 0;
+    while(g<this->ncols() && iguales) {
+      if (this->get(i,g) != m.get(i,g))
+        iguales = false;
+
+      g++;
+    }
+  }
+
+  return iguales;
+}
+
+template <class T>
+bool
+matriz<T>::operator!=(const matriz<T> & m) const
+{
+  if (this->nfilas()!=m.nfilas())
+    return false;
+
+  if (this->ncols()!=m.ncols())
+    return false;
+
+  int i,g;
+  bool iguales = true;
+  for (i = 0;i < this->nfilas() - 1;i++)
+    while(g<this->ncols() && iguales) {
+      if (this->get(i,g) != m.get(i,g))
+        iguales = false;
+
+    g++;
+  }
+
+  return !iguales;
+}
+
+template <class T>
+int
+matriz<T>::nfilas() const
+{
+  return this->_filas;
+}
+
+template <class T>
+int
+matriz<T>::ncols() const
+{
+  return this->_cols;
+}
+
+template <class T>
+void
+matriz<T>::nfilas(int n)
+{
+  if (n == this->nfilas()) return;
+
+  int i,g;
+
+  T ** aux = new T*[n];
+
+  for (i = 0;i<n;i++)
+    aux[i] = new T[this->ncols()];
+
+  for (i = 0; i < n; i++)
+    for (g = 0; g < this->ncols(); g++)
+      aux[i][g] = this->get(i,g);
+
+  for (i = 0;i<this->nfilas();i++)
+    delete [] this->items[i];
+
+  delete [] this->items;
+
+  this->_filas = n;
+
+  items = aux;
+}
+
+template <class T>
+void
+matriz<T>::ncols(int n)
+{
+
+  if (n == this->ncols()) return;
+
+  int i,g;
+
+  T ** aux = new T*[this->nfilas()];
+
+  for (i = 0;i<this->nfilas();i++)
+    aux[i] = new T[n];
+
+  for (i = 0; i < this->nfilas(); i++)
+    for (g = 0; g < n; g++)
+      aux[i][g] = this->get(i,g);
+
+  for (i = 0;i<this->nfilas();i++)
+    delete [] items[i];
+
+  delete [] items;
+
+  this->_cols = n;
+
+  items = aux;
+}
+
+
+template <class T>
+T
+matriz<T>::get(int nf, int nc) const
+{
+  if (nf<0 || nf >this->nfilas()-1 || nc<0 || nc > this->ncols()-1)
+    return 0;
+
+  return items[nf][nc];
+}
+
+template <class T>
+void
+matriz<T>::set(int nf, int nc, const T &dato)
+{
+  if (!(nf<0 || nf >this->nfilas()-1 || nc<0 || nc > this->ncols()-1))
+    items[nf][nc] = dato;
+}
+
+template <class T>
+T
+matriz<T>::minimo() const
+{
+
+  if (this->nfilas()==0 || this->ncols()==0)
+    return 0;
+
+  T min;
+  int i,g;
+  min = this->get(0,0);
+
+  for (i = 0; i < this->nfilas() ;i++)
+    for (g = 0; g < this->ncols() ;g++)
+      if (min > this->get(i,g))
+        min = this->get(i,g);
+
+  return min;
+}
+
+template <class T>
+T
+matriz<T>::minimo_fila(int f) const
+{
+  if (f < 0 || f > this->nfilas()-1)
+    return 0;
+
+  T min;
+  int i;
+  min = this->get(f,0);
+
+  for (i = 1; i < this->ncols() ;i++)
+    if (min > this->get(f,i))
+      min = this->get(f,i);
+
+  return min;
+}
+
+template <class T>
+T
+matriz<T>::maximo() const
+{
+  if (this->nfilas()==0 || this->ncols()==0)
+    return 0;
+
+  T max;
+  int i,g;
+  max = this->get(0,0);
+
+  for (i = 0; i < this->nfilas() ;i++)
+    for (g = 0; g < this->ncols() ;g++)
+      if (max < this->get(i,g))
+        max = this->get(i,g);
+
+  return max;
+}
+
+template <class T>
+T
+matriz<T>::maximo_fila(int f) const
+{
+  if (f < 0 || f > this->nfilas()-1)
+    return 0;
+
+  T max;
+  int i;
+  max = this->get(f,0);
+
+  for (i = 1; i < this->ncols() ;i++)
+    if (max < this->get(f,i))
+      max = this->get(f,i);
+
+  return max;
+}
+
+template <class T>
+bool
+matriz<T>::simetrica() const
+{
+  if (this->nfilas()!=this->ncols())
+    return false;
+
+  bool simetrica = true;
+  int i,g;
+  for (i = 0;i<this->nfilas();i++) {
+    g = 0;
+    while(g<this->ncols() && simetrica) {
+      if (g!=i) { //No pertenece a la diagonal principal.
+        if (this->get(i,g)!=this->get(g,i))
+          simetrica = false;
+      }
+      g++;
+    }
+  }
+
+  return simetrica;
+}
+
+template <class T>
+matriz<T>
+matriz<T>::traspuesta() const
+{
+  matriz<T> m = matriz(this->ncols() , this->nfilas());
+
+  int i, g;
+  for (i = 0;i < this->nfilas();i++)
+    for (g = 0;g < this->ncols();g++)
+      m.set(g , i , this->get(i,g));
+
+  return m;
+}
+
+template <class T>
+ostream & operator<<(ostream & s, const matriz<T> & m)
+{
+  int i, g, f , c;
+  f = m.nfilas();
+  c = m.ncols();
+
+  for (i = 0;i<f;i++) {
+    s << endl;
+    for (g = 0;g<c;g++)
+      s << " " << m.get(i,g);
+  }
+  s<<endl;
+
+  return s;
+}
+
+template <class T>
+void matriz<T>::reservar(int f,int c)
+{
+  this->_filas = f;
+  this->_cols = c;
+  items = new T*[this->nfilas()]; //Reservamos la memoria.
+
+  for (int i = 0;i<this->nfilas();i++)
+    items[i] = new T[this->ncols()];
+}
+
+template <class T>
+void matriz<T>::operator=(const matriz<T> & m)
+{
+
+  this->~matriz();
+
+  reservar(m.nfilas(),m.ncols());
+
+  for (int i = 0;i<this->nfilas();i++)
+    for (int g=0;g<this->ncols();g++)
+      this->set(i,g,m.get(i , g));
+}

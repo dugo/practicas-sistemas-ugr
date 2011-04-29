@@ -1,0 +1,231 @@
+/**
+  * @file abb.template
+  * @brief Implementación del TDA ABB
+  *
+  * T.D.A. para manejar un árbol binario de búsqueda cuyos elementos son
+  * (clave,definición).
+  *
+  *
+  */
+
+template <class tClave, class tDef>
+inline bool ABB<tClave,tDef>::encontrar(const ABB::Entrada &e,
+                typename ArbolBinario<ABB::Entrada>::Nodo &n,
+                typename ArbolBinario<ABB::Entrada>::Nodo &nodo_padre) const
+{
+  bool encontrado = false;
+  n = arbolb.Raiz();
+
+  nodo_padre = ArbolBinario<ABB::Entrada>::nodo_nulo;
+
+  while (n!=ArbolBinario<ABB::Entrada>::nodo_nulo && !encontrado) {
+    tClave aux =  arbolb.Etiqueta(n).clave;
+    if (aux==e.clave)  // La clave ya aparece
+      encontrado = true;
+    else {
+      nodo_padre = n;
+      if (aux<e.clave) // Debe insertarse a la derecha de n
+        n = arbolb.HijoDcha(n);
+      else // Debe insertarse a la izquierda de n
+        n = arbolb.HijoIzda(n);
+    }
+  }
+
+  return encontrado;
+}
+
+
+template <class tClave, class tDef>
+inline ABB<tClave, tDef>::ABB()
+{
+}
+
+template <class tClave, class tDef>
+void ABB<tClave, tDef>::Insertar(const tClave &clave, const tDef &definicion)
+{
+  bool encontrado = false;
+  typename ArbolBinario<ABB::Entrada>::Nodo n, nodo_padre;
+  ABB:Entrada Entrada;
+  Entrada.clave = clave;
+  Entrada.definicion = definicion;
+
+  encontrado = encontrar(Entrada, n, nodo_padre);
+
+  if (!encontrado)
+    if (nodo_padre == ArbolBinario<ABB::Entrada>::nodo_nulo) { // Arbol vacio
+      ArbolBinario<ABB::Entrada> aux(Entrada);
+      arbolb = aux;
+    }
+    else {
+      ArbolBinario<ABB::Entrada> aux(Entrada);
+      if (arbolb.Etiqueta(nodo_padre).clave<Entrada.clave)
+        arbolb.InsertarHijoDcha(nodo_padre, aux);
+      else
+        arbolb.InsertarHijoIzda(nodo_padre, aux);
+    }
+  else // Substituimos la etiqueta para esa clave
+    arbolb.Etiqueta(n) = Entrada;
+}
+
+template <class tClave, class tDef>
+bool ABB<tClave, tDef>::Recuperar(const tClave & clave,
+		 tDef & definicion) const
+{
+  ABB::Entrada e;
+  typename ArbolBinario<ABB::Entrada>::Nodo nodo, nodo_padre;
+
+  e.clave = clave;
+
+  bool encontrado = encontrar(e, nodo, nodo_padre);
+
+  if (encontrado)
+    definicion = arbolb.Etiqueta(nodo).definicion;
+
+  return encontrado;
+}
+
+template <class tClave, class tDef>
+bool ABB<tClave, tDef>::borrar_nodo(
+  typename ArbolBinario<ABB::Entrada>::Nodo nodo,
+  typename ArbolBinario<ABB::Entrada>::Nodo nodo_padre)
+{
+  typename ArbolBinario<ABB::Entrada>::Nodo nodo_nulo=
+    ArbolBinario<ABB::Entrada>::nodo_nulo;
+
+  if (arbolb.HijoIzda(nodo)==nodo_nulo &&
+      arbolb.HijoDcha(nodo)==nodo_nulo) {
+    ArbolBinario<ABB::Entrada> Taux;
+    if (nodo_padre == nodo_nulo)
+      arbolb.HacerNulo();
+    else {
+      if (arbolb.HijoIzda(nodo_padre)==nodo)
+        arbolb.PodarHijoIzda(nodo_padre, Taux);
+      else
+        arbolb.PodarHijoDcha(nodo_padre, Taux);
+    }
+  }
+  else { // 1 ó 2 hijos
+    if (arbolb.HijoIzda(nodo)!=nodo_nulo &&
+        arbolb.HijoDcha(nodo)!=nodo_nulo) {
+      typename ArbolBinario<ABB::Entrada>::Nodo aux=
+        arbolb.HijoIzda(nodo);
+      while (arbolb.HijoDcha(aux)!=nodo_nulo)
+        aux = arbolb.HijoDcha(aux);
+      arbolb.Etiqueta(nodo) = arbolb.Etiqueta(aux);
+      borrar_nodo(aux, arbolb.Padre(aux));
+    }
+    else { // 1 hijo
+      ArbolBinario<ABB::Entrada> Taux, Taux2;
+      if (arbolb.HijoIzda(nodo)!=nodo_nulo)
+        arbolb.PodarHijoIzda(nodo, Taux);
+      else
+        arbolb.PodarHijoDcha(nodo, Taux);
+
+      if (nodo_padre == nodo_nulo)
+        arbolb = Taux;
+      else {
+        if (arbolb.HijoIzda(nodo_padre)==nodo) {
+          arbolb.PodarHijoIzda(nodo_padre, Taux2);
+	  arbolb.InsertarHijoIzda(nodo_padre, Taux);
+        }
+        else {
+          arbolb.PodarHijoDcha(nodo_padre, Taux2);
+	  arbolb.InsertarHijoDcha(nodo_padre, Taux);
+        }
+      }
+    }
+  }
+}
+
+template <class tClave, class tDef>
+bool ABB<tClave, tDef>::Borrar(const tClave & clave)
+{
+  typename ArbolBinario<ABB<tClave, tDef>::Entrada>::Nodo nodo, nodo_padre;
+
+  ABB<tClave, tDef>::Entrada e;
+  e.clave = clave;
+
+  bool encontrado = encontrar(e, nodo, nodo_padre);
+  if (encontrado)
+    borrar_nodo(nodo, nodo_padre);
+
+  return encontrado;
+}
+
+template <class tClave, class tDef>
+bool ABB<tClave, tDef>::ExisteClave(const tClave & clave) const
+{
+  typename ArbolBinario<ABB::Entrada>::Nodo nodo, nodo_padre;
+  Entrada e;
+  e.clave = clave;
+
+  bool encontrado = encontrar(e, nodo, nodo_padre);
+
+  return encontrado;
+}
+
+template <class tClave, class tDef>
+inline int ABB<tClave, tDef>::num_elementos() const
+{
+  return arbolb.num_elementos();
+}
+
+template <class tClave, class tDef>
+typename ABB<tClave, tDef>::iterador ABB<tClave, tDef>::begin() const
+{
+  iterador ite;
+
+  ite.eliterador = arbolb.beginInOrden();
+  return ite;
+}
+
+template <class tClave, class tDef>
+typename ABB<tClave, tDef>::iterador ABB<tClave, tDef>::end() const
+{
+  iterador ite;
+
+  ite.eliterador = arbolb.endInOrden();
+  return ite;
+}
+
+template <class tClave, class tDef>
+inline ABB<tClave, tDef>::~ABB()
+{
+}
+
+template <class tClave, class tDef>
+inline ABB<tClave, tDef>::iterador::iterador()
+{
+}
+
+template <class tClave, class tDef>
+inline typename ABB<tClave, tDef>::iterador& ABB<tClave, tDef>::iterador::operator++(int)
+{
+  eliterador++;
+  return *this;
+}
+
+template <class tClave, class tDef>
+inline tClave ABB<tClave, tDef>::iterador::operator*() const
+{
+  return (*eliterador).clave;
+}
+
+template <class tClave, class tDef>
+inline tDef ABB<tClave, tDef>::iterador::definicion() const
+{
+  return (*eliterador).definicion;
+}
+
+
+template <class tClave, class tDef>
+inline bool ABB<tClave, tDef>::iterador::operator==(const iterador &i)
+{
+  return eliterador == i.eliterador;
+}
+
+template <class tClave, class tDef>
+inline bool ABB<tClave, tDef>::iterador::operator!=(const iterador &i)
+{
+  return eliterador != i.eliterador;
+}

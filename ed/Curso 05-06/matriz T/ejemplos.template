@@ -1,0 +1,30 @@
+template <class T>
+coordenadas<T>::coordenadas(T d, int f, int c) {
+  this->dat = d;
+  this->fila = f;
+  this->columna = c;
+  };
+
+template <class T>
+int
+coordenadas<T>::nfila() const {
+  return this->fila;
+};
+
+template <class T>
+int
+coordenadas<T>::ncol() const {
+  return this->columna;
+};
+
+template <class T>
+T
+coordenadas<T>::dato() const {
+  return this->dat;
+};
+
+template <class T>
+bool
+operator<(const coordenadas<T> &d,const coordenadas<T> &c) {
+  return d.dato()>c.dato();
+};

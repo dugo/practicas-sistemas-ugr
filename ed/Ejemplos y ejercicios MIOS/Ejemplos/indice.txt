@@ -1,0 +1,9 @@
+1.cpp list
+2.cpp list, pair y priority_queue
+3.cpp queue
+4.cpp set
+5.cpp stack
+6.cpp otro de stack
+7.cpp vector
+8.cpp preorden a postorden
+9.cpp prueba hash_table2

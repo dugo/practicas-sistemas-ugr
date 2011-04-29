@@ -1,0 +1,257 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+  
+  <meta http-equiv="Content-Language" content="es">
+
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+  
+  <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+
+  
+  <meta name="ProgId" content="FrontPage.Editor.Document">
+
+  
+  <title>PR&Aacute;CTICA 2</title>
+</head>
+
+
+<body>
+
+<hr>
+<p align="center"><font size="6">&nbsp;</font><font size="7">PR&Aacute;CTICA
+2:&nbsp;
+La clase <b><i>cadena</i></b></font></p>
+
+<p align="left">&nbsp;</p>
+
+<p align="left">&nbsp;</p>
+
+<p align="left"><font size="5">&nbsp;&nbsp;&nbsp; Estudio de la clase <b>'Cadena'</b>:</font>
+</p>
+
+<blockquote>
+  
+  <p align="left">&nbsp;&nbsp;&nbsp; En esta pr&aacute;ctica afrontaremos la
+implementaci&oacute;n parcial de la clase <b><i>cadena</i></b>. Para ello
+partiremos de la definici&oacute;n de la clase y de los principales m&eacute;todos y
+operadores de &eacute;sta. La definici&oacute;n de la clase se encuentra en el
+fichero <b><i>cadena.h</i></b> y la implementaci&oacute;n de los m&eacute;todos en
+el fichero <b><i>cadena.cpp</i></b>. Una descripci&oacute;n detallada de la
+clase puede encontrarse en: <a href="../../manualcpp.pdf">Aprenda C++ como
+si estuviera en primero.pdf</a> P&aacute;ginas 45- 54.</p>
+
+  
+  <p align="left">&nbsp;&nbsp;&nbsp; Hemos de recordar que la
+declaraci&oacute;n de una clase es de ordinario lo &uacute;nico que conocen los
+programadores-usuarios de la clase: al c&oacute;digo, esto es, a la definici&oacute;n
+de las funciones y operadores s&oacute;lo acceden los que programan la clase.
+Lo importante es resaltar que <b>la declaraci&oacute;n de la clase contiene
+toda la informaci&oacute;n necesaria</b> para utilizarla y sacarle partido.</p>
+
+  
+  <p align="left">&nbsp;&nbsp;&nbsp;&nbsp; En la declaraci&oacute;n de la
+clase no se ha reservado memoria para la cadena de caracteres, s&oacute;lo
+para el puntero <b><i>pstr</i></b>. La raz&oacute;n es que no se sabe a
+priori cu&aacute;ntos caracteres va a tener cada objeto de la clase <b><i>cadena</i></b>
+y se piensa por ello utilizar reserva din&aacute;mica de memoria: cuando se
+sepa el texto que se quiere guardar en un objeto determinado, se
+reservar&aacute; la memoria necesaria para ello.</p>
+
+  
+  <p align="left">&nbsp;&nbsp;&nbsp; La <b>tarea a realizar </b>en
+este primer apartado consiste en leer y comprender la definici&oacute;n e
+implementaci&oacute;n del constructor y de los m&eacute;todos de la clase.</p>
+
+  
+  <p align="left">&nbsp;</p>
+
+</blockquote>
+
+<p align="left"><font size="5">&nbsp;&nbsp;&nbsp; Implementaci&oacute;n de
+m&eacute;todos:</font>
+</p>
+
+<blockquote>
+  
+  <p align="left">&nbsp;&nbsp;&nbsp; Para familiarizarnos con esta
+clase, vamos a realizar la <b>implementaci&oacute;n de varios m&eacute;todos</b> con
+los que completar su funcionalidad. Los m&eacute;todos a implementar son:</p>
+
+  
+  <blockquote>
+    
+    <blockquote>
+      
+      <p align="left">/**<br>
+
+* @brief Permite conocer la longitud de objeto cadena.<br>
+
+* @return Devuelve la longitud o numero de caracteres del objeto&nbsp;<br>
+
+* cadena que invoque el metodo<br>
+
+*/<br>
+
+      <i>int <b>longitud</b>();</i><br>
+
+      <br>
+
+/**<br>
+
+* @brief Permite extraer caracteres aislados de un objeto cadena.&nbsp;<br>
+
+* @param i entero que indica la posicion del caracter a extraer.&nbsp;<br>
+
+* @return char el caracter i-esimo del objeto cadena que invoque el modo<br>
+
+* @pre 0 &lt;= i &lt; longitud()<br>
+
+*/<br>
+
+      <i>char <b>getChar</b>(int i);<br>
+
+      </i><br>
+
+/**<br>
+
+* @brief Permite establecer o cambiar caracteres concretos de un objeto
+cadena.&nbsp;<br>
+
+* @param i entero que indica la posicion del caracter a
+cambiarextraer.&nbsp;<br>
+
+* @param c char con el caracter que se fijara en la posicion i.<br>
+
+* @pre 0 &lt;= i &lt; longitud()<br>
+
+*/<br>
+
+      <i>void <b>setChar</b>(int i, char c);<br>
+
+      </i><br>
+
+/**<br>
+
+* @brief Permite extraer o conocer subacadenas dentro de un objeto
+cadena.<br>
+
+* @param ini entero que indica la posicion de inicio de la subcadena a
+extraer.<br>
+
+* @param fin entero que inidica la posicion de fin de la subcadena a
+extraer.<br>
+
+* @pre 0 &lt;= ini &lt; longitud() &amp;&amp; 0 &lt;= fin &lt;
+longitud() &amp;&amp; ini &lt;= fin .<br>
+
+*/<br>
+
+cadena <b>subCadena</b>(int ini, int fin);<br>
+
+      </p>
+
+    </blockquote>
+
+  </blockquote>
+
+  
+  <p align="left">&nbsp;&nbsp;&nbsp; Si bien en la implementaci&oacute;n de
+los m&eacute;todos de una clase se tiene un acceso no restringido a los campos
+de &eacute;sta, es muy recomendable el utilizar al m&aacute;ximo posible, dentro de
+esta implementaci&oacute;n, los m&eacute;todos previamente implementados. Como
+ejemplo,&nbsp; implementaremos el m&eacute;todo <b><i>subCadena</i></b> sin
+acceder de forma expl&iacute;cita o directa a los campos de la clase.</p>
+
+</blockquote>
+
+<p align="left">&nbsp; </p>
+
+<p align="left"><font size="5">&nbsp;&nbsp;&nbsp; Implementaci&oacute;n de
+funciones:</font>
+</p>
+
+<blockquote>
+  
+  <p align="left">&nbsp;&nbsp;&nbsp; En este &uacute;ltimo apartado
+pretendemos afrontar la resoluci&oacute;n de una serie de problemas de mayor
+complejidad haciendo uso de la clase <i><b>cadena</b></i>. En el
+fichero <b>funciones.h </b>encontraremos la definici&oacute;n de las dos
+funciones que tenemos que implementar en este apartado. Las funciones a
+implementar son:</p>
+
+  
+  <blockquote>
+    
+    <p align="left">/**<br>
+
+* @brief Funci&oacute;n de inserci&oacute;n de una cadena en otra.<br>
+
+* @param cad referencia al objeto cadena con el texto en el que se&nbsp;<br>
+
+* insertar&aacute; un nuevo texto.<br>
+
+* @param inserta referencia al objeto cadena con el texto que se
+insertara.<br>
+
+* @param pos entero con la posici&oacute;n a partir de la cual se insertar&aacute; la
+cadena inserta en&nbsp;<br>
+
+* la cadena cad.<br>
+
+* @return objeto nuevo cadena con el texto compuesto por la inserci&oacute;n
+del&nbsp;<br>
+
+* texto del objeto inserta en el texto de la cadena cad a partir de la
+posici&oacute;n pos.<br>
+
+*/<br>
+
+    <i>cadena <b>insertarCadena</b>(const cadena&amp; cad, const
+cadena&amp; inserta, int pos);</i> </p>
+
+    
+    <p align="left">Ej. insertaCadena("Hola Chaval", "&iquest;Qu&eacute; tal?", 4)
+devolver&iacute;a "Hola &iquest;Que tal? Chaval".<br>
+
+    </p>
+
+    
+    <p align="left">/**<br>
+
+* @brief Funci&oacute;n que determina si el texto contenido en el objeto
+cadena es un pal&iacute;ndromo.<br>
+
+* @param cad referencia a objeto cadena.<br>
+
+* @return devuelve true si el texto del objeto cadena cad es un
+pal&iacute;ndromo y false.<br>
+
+* en caso contrario.<br>
+
+*/<br>
+
+    <i>bool <b>palindromo</b>(const cadena&amp; cad);<br>
+
+    </i> </p>
+
+    
+    <p align="left">Ej: 'ana', 'otto', 'sanas', 'abba', .... </p>
+
+  </blockquote>
+
+</blockquote>
+
+<p align="left"><br>
+
+<font size="5">&nbsp;&nbsp;&nbsp;</font> <font size="5">Archivos de la
+practica:&nbsp; <a href="pract2.zip">pract2.zip</a></font></p>
+
+<hr>
+<p align="left">&nbsp;&nbsp; <font size="4"> </font></p>
+
+</body>
+</html>

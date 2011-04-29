@@ -1,0 +1,91 @@
+template <class T,  class comparar  >
+POT<T,comparar>::POT() 
+{ 
+  el_POT = vector<T>(100);
+}
+
+
+template <class T,  class comparar >
+POT<T,comparar>::POT(const T& valor)
+{
+  el_POT = vector<T>(100);
+  el_POT.push_back(valor);
+}
+
+template <class T,  class comparar >
+POT<T,comparar>::POT  (const POT<T,comparar>& a)
+{
+ el_POT= a.ultimo;
+}
+
+
+template <class T,  class comparar >
+POT<T,comparar>::~POT()
+{
+}
+
+template <class T,  class comparar >
+void POT<T,comparar>::insert(const T & valor)
+{ int n;
+  T aux;
+  
+  el_POT.push_back(valor);
+
+  n = el_POT.size()-1;
+  while ( (Padre(n)!= NULO) && comp(el_POT[Padre(n)],el_POT[n]) ) {
+    intercambia(n, Padre(n));
+    n=Padre(n);
+  }
+  
+}
+  
+
+template <class T,  class comparar >
+void POT<T,comparar>::pop()
+{
+ int n;
+ T izq,dch,v;
+ bool salir = false;
+ 
+ el_POT[0]= el_POT[el_POT.size()-1];
+ el_POT.pop_back();
+ n = 0;
+ while (Hijo_Izq(n) != NULO && Hijo_Dcha(n)!= NULO && !salir ) {
+   izq = el_POT[Hijo_Izq(n)];
+   dch = el_POT[Hijo_Dcha(n)];
+   v = el_POT[n];
+   if ( !comp(v,izq)  &&  !comp(v,dch) ) salir = 1;
+   else if ( comp(dch,izq) ) {
+	      intercambia(n,Hijo_Izq(n));
+       n = Hijo_Izq(n);
+     } else {
+        intercambia(n,Hijo_Dcha(n));
+        n = Hijo_Dcha(n);
+   }
+ }
+ if (!salir && Hijo_Izq(n)!= NULO && comp(el_POT[n],el_POT[Hijo_Izq(n)])  ) 
+             // n tiene un unico hijo, el izquierda
+   intercambia(n,Hijo_Izq(n));
+           
+} 
+
+template <class T,  class comparar >
+const T&  POT<T,comparar>::top() const
+{
+  return el_POT[0];
+}
+
+
+
+ template <class T,  class comparar>
+ bool  POT<T,comparar>::empty() const
+{
+  return el_POT.empty();
+}
+
+
+template <class T,  class comparar >
+ void  POT<T,comparar>::clear()
+{
+  el_POT.clear();
+}

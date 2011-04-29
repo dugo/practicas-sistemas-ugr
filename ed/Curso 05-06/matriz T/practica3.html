@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>Práctica sobre construcción y uso de TDAs.</title></head>
+
+<body>
+<h1> Práctica sobre construcción y uso básico de
+TDAs.</h1>
+<h2>Objetivo.</h2>
+El objetivo de esta práctica es el de familiarizarse con la
+definición, especificación e implementación de un
+TDA.<br>
+Así mismo, tener un primer contacto con el uso de los TDAs de la
+STL más sencillos.<br>
+<h2>Tareas a realizar.<br>
+</h2>
+Se debe:<br>
+<ol>
+  <li>revisar cuidadosamente el conjunto de operaciones de que dispone
+el tipo de dato, <br>
+  </li>
+  <li>realizar una especificación adecuada para cada una de
+ellas,</li>
+  <li>buscar una representación adecuada para el tipo de dato
+que permita que las operaciones se puedan realizar de la forma
+más eficiente desde el punto de vista de tiempo y/o espacio,</li>
+  <li>definir una función de abstracción y los
+invariantes que se deben cumplir para esa representación.<br>
+  </li>
+</ol>
+<h2>Definición del problema.<br>
+</h2>
+Construir una clase matriz&lt;T&gt; donde T debe ser una clase con una
+relación de orden entre sus elementos.<br>
+Se debe proponer una representación válida e indicar la
+función de
+abstracción y los invariantes de la representación.<br>
+La clase debe tener las siguiente operaciones (para las que hay
+realizar una especificación)<br>
+<ol>
+  <li>Constructor por defecto de la clase. Se le indica el
+número de
+filas y de columnas.</li>
+  <li>Constructor basado en un dato de tipo T. Crea una matriz con un
+número de filas y número de columnas y en cada
+posición tiene el dato
+de tipo T</li>
+  <li>Constructor de copia.</li>
+  <li>Destructor</li>
+  <li>==, !=</li>
+  <li>&lt;&lt;<br>
+  </li>
+  <li><span style="font-style: italic;">int nfilas() const</span>.
+Devuelve el número de filas de la matriz</li>
+  <li><span style="font-style: italic;">int ncols() const</span>.
+Devuelve el número de columnas de la matriz</li>
+  <li><span style="font-style: italic;">void nfilas(int n)</span>.
+Cambia el número de filas. Si n es menor que
+el número de filas actual, debe conservar las n primeras.</li>
+  <li><span style="font-style: italic;">void ncols(int n)</span>.
+Cambia el número de columnas. Si n es menor
+que el número de columnas actual, debe conservar las n primeras.<br>
+  </li>
+  <li><span style="font-style: italic;">T get(int nf, int nc) const</span>.
+Devuelve el elemento que se
+encuentra en la
+posición (nf,nc)</li>
+  <li><span style="font-style: italic;">void set(int nf, int nc, const
+T &amp;dato)</span>. Asigna un valor <b>dato</b>
+en la posición (nf,nc)</li>
+  <li><span style="font-style: italic;">T minimo() const</span>.
+Devuelve el valor mínimo de la matriz</li>
+  <li><span style="font-style: italic;">T minimo_fila(int fila) cons</span>t.
+Devuelve el mínimo para una fila i</li>
+  <li><span style="font-style: italic;">T maximo() const</span>.
+Devuelve el valor máximo de la matriz</li>
+  <li><span style="font-style: italic;">T maximo_fila(int f) const</span>.
+Devuelve el máximo de una fila i</li>
+  <li><span style="font-style: italic;">bool simetrica() const</span>.
+Devuelve un valor lógico que indica si la
+matriz es o
+no simétrica.<br>
+  </li>
+  <li><span style="font-style: italic;">matriz&lt;T&gt; traspuesta()
+const</span>. Devuelve la matriz traspuesta.</li>
+</ol>
+Se deben probar todas y cada una de las operaciones usando ejemplos.<br>
+<br>
+Además, se deben resolver los siguientes problemas (con la
+cabecera que se indica):<br>
+<ul>
+  <li>ejemplo1: Construir una función que determine si una
+matriz de
+enteros de tamaño nxn es
+"mágica". Donde mágica significa que la suma de cada
+fila, de cada
+columna y de cada diagonal es la misma.</li>
+  <ul>
+    <li><span style="font-style: italic;">bool magica((const
+matriz&lt;int&gt; &amp;entrada)</span><br>
+    </li>
+  </ul>
+  <li>ejemplo2: Construir una función que obtenga los
+mínimos de cada
+fila de una matriz y los devuelva en una lista de forma ordenada.<br>
+  </li>
+  <ul>
+    <li><span style="font-style: italic;">list&lt;T&gt;
+minimos_fila(const matriz&lt;T&gt; &amp;entrada)</span><br>
+    </li>
+  </ul>
+  <li>ejemplo3: Construir una función a la que se le pase una
+lista de
+matrices de enteros y que las multiplique.</li>
+  <ul>
+    <li><span style="font-style: italic;">matriz&lt;int&gt;
+multiplicar(const list&lt;matriz&lt;int&gt; &gt; &amp;entrada)</span><br>
+    </li>
+  </ul>
+  <li>ejemplo4: Construir una función a la que se le pase una
+matriz y
+que devuelva una lista ordenada de tripletas {dato, fila,
+columna}. Para ello se debe utilizar una cola con prioridad.</li>
+  <ul>
+    <li><span style="font-style: italic;">list&lt;coordenadas&gt;
+ordenada(const matriz&lt;T&gt; &amp;entrada)</span><br>
+    </li>
+  </ul>
+</ul>
+<h2>Entrega<br>
+</h2>
+Se debe entregar, usando GAP, la siguiente información:<br>
+<ul>
+  <li>matriz.h: fichero de cabecera de la clase que debe contener la
+definición de la clase y la especificación de cada una de
+las
+operaciones.</li>
+  <li>matriz.template: fichero que debe contener la
+implementación de
+cada una de las operaciones.</li>
+  <li>ejemplos.h: Fichero de cabecera para los ejemplos.<br>
+  </li>
+  <li>ejemplos.cpp: Implementación de las funciones ejemplo.<br>
+  </li>
+  <li>ejemplo1.cpp: Programa de prueba del ejemplo1</li>
+  <li>ejemplo2.cpp: Programa de prueba del ejemplo2</li>
+  <li>ejemplo3.cpp: Programa de prueba del ejemplo3</li>
+  <li>ejemplo4.cpp: Programa de prueba del ejemplo4</li>
+</ul>
+<span style="font-weight: bold;">Importante:</span> No se pueden
+modificar las cabeceras de las funciones.<br>
+<br>
+La <span style="font-weight: bold;">fecha de entrega</span> aún
+no está definida y aparecerá más adelante en esta
+misma página.<br>
+<br>
+</body></html>

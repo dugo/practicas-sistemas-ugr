@@ -1,0 +1,175 @@
+
+template <class KeyClass, class DefClass>
+hash_table<KeyClass,DefClass>::hash_table(int tama)
+{
+
+	tabla.resize(tama);
+
+}
+
+template <class KeyClass, class DefClass>
+hash_table<KeyClass,DefClass>::hash_table(const hash_table<KeyClass,DefClass> &th)
+{
+	tabla=th.tabla;
+}
+
+template <class KeyClass, class DefClass>
+void
+hash_table<KeyClass,DefClass>::insert(const KeyClass &dato, const DefClass &elem)
+{
+	const_iterator it=begin();
+	bool enc=false;
+
+	while (it!=end() && !enc){
+		enc = ((*it).first==dato);
+		it++;
+	}
+
+	if (!enc) tabla[funcion_hash(dato)].push_back(casilla(dato,elem));
+}
+
+template <class KeyClass, class DefClass>
+bool
+hash_table<KeyClass,DefClass>::erase(const KeyClass &dato)
+{
+	typename list<casilla>::iterator it;
+
+	int i=funcion_hash(dato);
+	bool enc=false;
+	it=tabla[i].begin();
+	while (!enc && it!=tabla[i].end()) {
+		enc = ((*it).datos().first==dato);
+		if (!enc) it++;
+	}
+
+	if (enc) tabla[i].erase(it);
+
+	return enc;
+}
+
+template <class KeyClass, class DefClass>
+bool
+hash_table<KeyClass,DefClass>::find(const KeyClass &dato, DefClass &elem) const
+{
+	typename list<casilla>::const_iterator it;
+
+	int i=funcion_hash(dato);
+	bool enc=false;
+	it=tabla[i].begin();
+	while (!enc && it!=tabla[i].end()) {
+		enc = ((*it).datos().first==dato);
+		if (!enc) it++;
+	}
+
+	if (enc) elem=((*it).datos()).second;
+
+	return enc;
+}
+
+template <class KeyClass, class DefClass>
+int
+hash_table<KeyClass,DefClass>::size( ) const
+{
+	return tabla.size();
+}
+
+template <class KeyClass, class DefClass>
+bool
+hash_table<KeyClass,DefClass>::empty( ) const
+{
+	return (tabla.size()==0);
+}
+
+template <class KeyClass, class DefClass>
+typename hash_table<KeyClass,DefClass>::const_iterator
+hash_table<KeyClass,DefClass>::begin() const
+{
+	int i=0;
+	bool enc=false;
+	const_iterator it;
+	it.latabla=&tabla;
+	while(i<tabla.size() && !enc){
+		enc = (tabla[i].size()>0);
+		if (!enc) i++;
+	}
+
+	if (enc) {
+		it.list_actual=i;
+		it.posicion_actual=tabla[i].begin();
+	}
+	else {
+		it.list_actual=0;
+		it.posicion_actual=tabla[0].end();
+	}
+
+	return it;
+}
+
+template <class KeyClass, class DefClass>
+typename hash_table<KeyClass,DefClass>::const_iterator
+hash_table<KeyClass,DefClass>::end() const
+{
+	int i=tabla.size()-1;
+	bool enc=false;
+	const_iterator it;
+	it.latabla=&tabla;
+	while(i>0 && !enc){
+		enc = (tabla[i].size()>0);
+		if (!enc) i--;
+	}
+
+	if (enc) {
+		it.list_actual=i;
+		it.posicion_actual=tabla[i].end();
+	}
+	else {
+		it.list_actual=0;
+		it.posicion_actual=tabla[0].end();
+	}
+
+	return it;
+}
+
+
+template <class KeyClass, class DefClass>
+hash_table<KeyClass,DefClass>::~hash_table()
+{
+}
+
+template <class KeyClass, class DefClass>
+int
+hash_table<KeyClass,DefClass>::funcion_hash(KeyClass dato) const
+{
+
+	return (dato%tabla.capacity());
+
+}
+
+template <class KeyClass, class DefClass>
+void
+hash_table<KeyClass,DefClass>::realizar_rehashing()
+{
+}
+
+template <class KeyClass, class DefClass>
+typename hash_table<KeyClass,DefClass>::const_iterator
+hash_table<KeyClass,DefClass>::const_iterator::operator++(int)
+{
+
+	posicion_actual++;
+	if (posicion_actual==latabla[0][list_actual].end()) {
+		int i=list_actual+1;
+		typename list<casilla>::iterator it;
+		bool enc=false;
+		while (i<latabla->size() && !enc) {
+			enc = (latabla[0][i].size()>0);
+			if (!enc) i++;
+		}
+		if (enc) {
+			list_actual=i;
+			posicion_actual=latabla[0][i].begin();
+		}
+	}
+
+	return *this;
+}
