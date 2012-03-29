@@ -8,18 +8,20 @@ En este repositorio iré liberando las prácticas que he realizado en toda la ca
 Contenido
 =========
 
-redes/                  Redes de Computadores.
-      prac3/            Resolución de la práctica 3.
-      prac4/            Resolución de la práctica 4.
-mei/                    Mantenimiento de Equipos Informáticos.
-ccd/                    Codificación y Compresión de Datos.
-    prac2/                  Práctica 2
-    prac6/                  Práctica 6
-    prac8/                  Práctica 8
-mia/                    Modelos de Inteligencia Artificial
-    Practica 1, el.../      Práctica 1, el turista virtual
-ta/                     Teoría de Algoritmos
-    Curso 09-10/            Resolución de las prácticas del curso 2009-2010
+redes/
+  Redes de Computadores.
+
+mei/
+  Mantenimiento de Equipos Informáticos.
+
+ccd/
+  Codificación y Compresión de Datos.
+
+mia/
+  Modelos de Inteligencia Artificial
+
+ta/
+  Teoría de Algoritmos
 
 
 Nota
