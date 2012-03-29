@@ -1,9 +1,6 @@
-Modelos de Inteligencia Artificial
-==================================
-
-Contenido
-=========
-Práctica 1, el turista virtual.
+Estructuras de Datos
+====================
+====================
 
 Nota
 ====

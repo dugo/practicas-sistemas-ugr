@@ -1,9 +1,10 @@
-Redes de Computadores
-=====================
+Modelos de Inteligencia Artificial
+==================================
+==================================
 
 Contenido
 =========
-Práctica 3 y 4.
+Práctica 1, el turista virtual.
 
 Nota
 ====

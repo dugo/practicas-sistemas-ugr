@@ -5,7 +5,7 @@ Mantenimiento de Equipos Informáticos
 
 Contenido
 =========
-Trabajo final de la asignatura.
+Todos los trabajos optativos y obligatorios de la asignatura.
 
 Nota
 ====
