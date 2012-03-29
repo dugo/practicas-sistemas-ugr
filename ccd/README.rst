@@ -33,7 +33,7 @@ en copias del original o derivadas.
 
 Contacto
 ========
-|Rubén Dugo
-|rdugomartin@gmail.com
-|@dugo
-|http://dug0.com
+| Rubén Dugo
+| rdugomartin@gmail.com
+| @dugo
+| http://dug0.com
