@@ -23,6 +23,9 @@ mia/
 ta/
   Teoría de Algoritmos
 
+ed/
+  Estructuras de Datos
+
 
 Nota
 ====
