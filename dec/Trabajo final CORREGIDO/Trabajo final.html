@@ -1,0 +1,455 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+<title>[DYEC] Trabajo final</title>
+<style type="text/css">
+
+body {
+	color: black; background: white;
+}
+
+hr {
+	color: #1E90FF;
+	background-color: #1E90FF;
+	height: 1px;
+	width: 80%;
+}
+
+ol {
+	font: italic 1em Georgia, Times, serif;
+	color: #999999;
+	margin-top: 60px;
+	margin-bottom: 60px;
+	margin-left: 300px;
+}
+
+ol a {
+	font: normal .9em Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #000000;
+}
+
+p {
+	text-indent: 2em; margin-top: 20; margin-bottom: 0;
+	margin-left: 5%; margin-right: 5%;
+	font: normal .9em Arial, Helvetica, sans-serif;
+	color: #000000;
+	text-align: justify;
+}
+
+ul {
+	text-indent: 1em; margin-top: 20; margin-bottom: 0;
+	margin-left: 5%; margin-right: 5%;
+	font: normal .9em Arial, Helvetica, sans-serif;
+	color: #000000;
+	text-align: justify;
+}
+
+ul a {
+	color: #000000;
+}
+
+p a {
+	color: #000000;
+}
+
+h1 {
+	text-align: center;
+}
+
+h3 {
+	margin-top: 30px;
+}
+
+div.figure {
+	float: none;
+	border: thin silver solid;
+	margin: 2em auto 2em auto;
+	padding: 0.5em 0.5em 0.5em 0.5em;
+	align: center;
+}
+div.figure p {
+  text-align: center;
+  font-style: italic;
+  font-size: smaller;
+  text-indent: 0;
+}
+
+#hor-minimalist-a
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	background: #fff;
+	margin: 3em auto 3em auto;
+	width: auto;
+	border-collapse: collapse;
+	text-align: left;
+	align: center;
+}
+#hor-minimalist-a thead th
+{
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	color: #039;
+	padding: 10px 8px;
+	border-bottom: 2px solid #6678b1;
+}
+#hor-minimalist-a tbody th
+{
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	color: #039;
+	padding: 10px 8px;
+}
+#hor-minimalist-a td
+{
+	color: #669;
+	text-align: center;
+	padding: 4px 4px 4px 4px;
+}
+
+#hor-minimalist-a tfoot th
+{
+	border-top: 2px solid #6678b1;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	color: #039;
+	padding: 10px 8px;
+}
+
+#hor-minimalist-a tfoot td
+{
+	border-top: 2px solid #6678b1;
+	color: #669;
+	text-align: right;
+	font-style: italic;
+	padding: 4px 4px 4px 4px;
+}
+
+
+</style>
+</head>
+<body>
+<h1>Dise&ntilde;o y evaluaci&oacute;n de computadores</h1>
+<h2>Trabajo final: Rendimiento de discos duros trabajando con bases de datos</h2>
+
+<hr>
+
+<ol>
+<li><a href="#1">Objetivos y definici&oacute;n del sistema</a></li>
+<li><a href="#2">Servicios del sistema</a></li>
+<li><a href="#3">Seleccionar las m&eacute;tricas</a></li>
+<li><a href="#4">Par&aacute;metros que pueden afectar a las prestaciones</a></li>
+<li><a href="#5">Factores a estudiar</a></li>
+<li><a href="#6">Seleccionar las t&eacute;cnicas de evaluaci&oacute;n</a></li>
+<li><a href="#7">Seleccionar la carga de trabajo</a></li>
+<li><a href="#8">Dise&ntilde;ar los experimentos</a></li>
+<li><a href="#9">Analizar e interpretar los datos</a></li>
+<li><a href="#10">Presentar los resultados</a></li>
+</ol>
+
+
+
+<a id="1"></a><hr><h3 align="center">1. Objetivos y definici&oacute;n del sistema</h3>
+<p>
+El objetivo del trabajo es medir el rendimiento de varios discos duros (incluyendo a su sistema de archivos, que es evaluado en conjunto) trabajando con bases de datos, para ello seleccionar&eacute; varias pruebas que realizan tareas semejantes a un sistema de bases de datos en como posicionamientos, lecturas secuenciales, etc.
+</p>
+<p>
+Adicionalmente supongo que las bases de datos est&aacute;n situadas en un medio de almacenamiento externo, por lo que tambi&eacute;n realizar&eacute; los mismos tests para los discos duros conectados mediante USB.
+</p>
+<p>
+Con la finalidad de eliminar las posibles influencias del resto del sistema sobre las mediciones inicio el sistema desde un CD de arranque (o LiveCD) de la distribuci&oacute;n de <span style="font-style: italic;">GNU/Linux Ubuntu</span> en su versi&oacute;n m&aacute;s actual (<span style="font-style: italic;">9.04, codename Jaunty Jackalope</span>) de forma que el sistema operativo resida en la RAM y no influya de manera alguna sobre el comportamiento y el rendimiento de los discos duros.
+</p>
+
+<p>
+Aunque no es importante, la especificaci&oacute;n del equipo utilizado es la siguiente:
+</p>
+
+<table summary="Equipos" id="hor-minimalist-a">
+<thead>
+<tr><th></th><th>Caracter&iacute;sticas</th></tr>
+</thead>
+<tbody>
+<tr><th>Procesador</th><td>AMD Athlon XP 2100+ (1.73 GHz)</td></tr>
+<tr><th>RAM</th><td>512 MB DDR</td></tr>
+<tr><th>Placa base</th><td>ASUS A7N8X-X</td></tr>
+<tr><th>IDE</th><td>2 x UltraDMA 133/100/66/33</td></tr>
+<tr><th>USB</th><td>3 x USB 2.0</td></tr>
+</tbody>
+</table>
+
+<p>
+Los discos analizados son:
+</p>
+
+<table summary="Discos duros" id="hor-minimalist-a">
+<thead>
+<tr><th></th><th>Modelo</th><th>Est&aacute;ndar</th><th>Capacidad</th><th>RPM</th><th>S.A.</th></tr>
+</thead>
+<tfoot><tr><td colspan="6">
+NOTA: La fila <span style="font-weight: bold;">S.A.</span> indica el sistema de archivos en el cual se han realizado las pruebas.
+</td></tr></tfoot>
+<tbody>
+
+<tr><th>Disco 1</th><td>Maxtor 91021U2</td><td>ATA-66</td><td>10.1 GB</td><td>5400</td><td>FAT32</td></tr>
+<tr><th>Disco 2</th><td>Seagate ST340016A</td><td>ATA-100</td><td>40.0 GB</td><td>7200</td><td>EXT3</td></tr>
+<tr><th>Disco 3</th><td>Seagate ST380011A</td><td>ATA-100</td><td>80.0 GB</td><td>7200</td><td>XFS</td></tr>
+<tr><th>Disco 4</th><td>Maxtor Diamond Plus 9</td><td>ATA-133</td><td>160.0 GB</td><td>7200</td><td>NTFS</td></tr>
+
+</tbody>
+</table>
+
+<p>
+La interfaz <span style="font-weight: bold;">USB 2.0</span> con soporte para conexi&oacute;n <span style="font-style: italic;">IDE/SATA</span>:
+</p>
+
+<div class="figure" style="width: 410px ; height: 336px ; ">
+  <p><img src="interfazusb.png" width="354"
+    height="281" alt="Interfaz USB">
+  <p>Interfaz USB utilizada
+</div>
+
+<p>
+Por &uacute;ltimo, se&ntilde;alar que he utilizado un cable <span style="font-style: italic;">ATA-100</span> (40 pines y 80 cables) para que los discos duros funcionen a pleno rendimiento, ya que utilizar un cable de 40 cables reducir&iacute;a las prestaciones a ATA-3.
+</p>
+
+<a id="2"></a><hr><h3 align="center">2. Servicios del sistema</h3>
+<p>
+Como he mencionado anteriormente, se trata de un sistema que pese a que se haya inicializado desde un LiveCD es totalmente operativo, por lo tanto los servicios que ofrece son los t&iacute;picos que ofrece un sistema orientado al usuario.
+</p>
+<p>
+En lo referente a los discos duros, ofrecen los mismos servicios que cualquier medio de almacenamiento: lectura/escritura de archivos (o bloques a un nivel m&aacute;s bajo), posicionamiento aleatorio, tecnolog&iacute;a SMART, etc.
+</p>
+
+<a id="3"></a><hr><h3 align="center">3. Seleccionar las m&eacute;tricas</h3>
+<p>
+Para la velocidad de lectura utilizar&eacute; los megabytes por segundo (<span style="font-style: italic;">MB/s</span>) y para el posicinamiento aleatorio el n&uacute;mero medio de saltos por segundo. Para ambas magnitudes mayor es mejor (<span style="font-style: italic;">HB</span>).
+</p>
+
+<a id="4"></a><hr><h3 align="center">4. Par&aacute;metros que pueden afectar a las prestaciones</h3>
+<p>
+Para todos los discos duros utilizar&eacute; el mismo ordenador, por lo que el hardware no influir&aacute;.
+En el caso del software pasa algo parecido; debido al arranque de la m&aacute;quina desde el LiveCD, el sistema operativo se alojar&aacute; en la RAM por lo que este elemento no influir&aacute; de ninguna manera en el rendimiento del disco duro y obtendremos el uso exclusivo del mismo.
+</p>
+<p>
+Por otro lado, tambi&eacute;n es relevante la forma de conexi&oacute;n de cada disco duro con el PC para que esto no influya de forma alguna cada uno ser&aacute; conectado como <span style="font-weight: bold;">Maestro en el IDE primario</span>, por lo que el sistema ser&aacute; apagado y encendido para cada disco, estableciendo de paso el mismo estado del sistema para cada uno. Otro factor que quiz&aacute;s influya es el cable utilizado, siempre ser&aacute; el mismo; el cable <span style="font-style: italic;">ATA-100</span> mencionado anteriormente.
+</p>
+<p>
+En el caso de la conexi&oacute;n por USB se reiniciar&aacute; el sistema de la misma forma.
+</p>
+<p>
+Por &uacute;ltimo, otro punto importante que puede afectar a las prestaciones son las diferentes particiones y sistemas de archivos de las mismas que alojen los discos, para una prueba (<span style="font-style: italic;">velocidad de lectura</span>) esto es indiferente, sin embargo, para el otro (<span style="font-style: italic;">posicionamiento aleatorio</span>) es m&aacute;s influyente.
+</p>
+
+<a id="5"></a><hr><h3 align="center">5. Factores a estudiar</h3>
+<p>
+Seg&uacute;n he mencionado en el apartado anterior, no existen factores que cambien durante el estudio, por lo que se hace innecesario estudiar factores y establecer niveles.
+</p>
+
+
+<a id="6"></a><hr><h3 align="center">6. Seleccionar las t&eacute;cnicas de evaluaci&oacute;n</h3>
+<p>
+Ya que disponemos del sistema completo y totalmente funcional, utilizar&eacute; la t&eacute;cnica de <span style="font-style: italic; font-weight: bold;">medici&oacute;n</span> que es la m&aacute;s apropiada. Para ello utilizar&eacute; dos benchmarks sint&eacute;ticos:
+</p>
+<ul>
+<li>
+La utilidad <span style="font-weight: bold; font-style: italic;">hdparm v8.9</span> (incluida en todas las distribuciones GNU/Linux) con el par&aacute;metro <span style="font-style: italic;">-t</span> que mide la velocidad de lectura secuencial del disco.
+El n&uacute;mero de particiones o el sistema de archivos no afecta a este valor por lo que resulta id&oacute;neo para comparar discos con sistema de archivos diferentes, como es este caso.
+En un <span style="font-style: italic;">sistema real</span>, este valor representar&iacute;a la velocidad de lectura de campos consecutivos de la base de datos.
+</li>
+<li>
+Y la utilidad <span style="font-weight: bold; font-style: italic;">bonnie++ v1.03e</span> (m&aacute;s informaci&oacute;n <a href="http://www.coker.com.au/bonnie++" target="_blank" onClick="window.open(this.href, this.target); return false;">aqu&iacute;</a>), concretamente extraigo el valor que corresponde a la media de saltos aleatorios por segundo que puede dar el disco, de forma que obtengo una informaci&oacute;n relevante de los tiempo de latencia y posicionamiento. Este valor si se ve afectado, aunque levemente, por el sistema de archivos en el que se ejecute el benchmark.
+En un <span style="font-style: italic;">sistema real</span>, este dato equivaldr&iacute;a al posicionamiento en un campo cualquiera de la base de datos.
+</li>
+</ul>
+
+<p>
+Los resultados han sido obtenidos calculando las medias aritm&eacute;ticas de varias repeticiones de los tests, cada disco duro ha sido conectado un par de veces; una mediante una cable IDE directamente a la placa base y otra mediante USB gracias a la interfaz.
+</p>
+
+<a id="7"></a><hr><h3 align="center">7. Seleccionar la carga de trabajo</h3>
+<p>
+Con el fin de obtener los resultados, realizar&eacute; con el programa <span style="font-weight: bold; font-style: italic;">hdparm</span> la medici&oacute;n de la velocidad de lectura que consiste en leer desde el disco al buffer del sistema sin tener ning&uacute;n dato cacheado previamente.
+</p>
+<p>
+El test realizado por el programa <span style="font-weight: bold; font-style: italic;">bonnie++</span> consistir&aacute; en saltar a bloques seleccionados aleatoriamente de un fichero durante un intervalo de tiempo y realizar la media de saltos por segundo.
+</p>
+
+<a id="8"></a><hr><h3 align="center">8. Dise&ntilde;ar los experimentos</h3>
+<p>
+Como ya hemos comentado en apartados anteriores, en esta evaluaci&oacute;n no existir&aacute;n niveles (los factores no cambian) de forma que para obtener los valores simplemente ejecutamos los benchmarks mencionados 3 veces por cada disco y conexi&oacute;n (IDE/USB) y se realizan la medias aritm&eacute;ticas pertinentes.
+</p>
+
+<a id="9"></a><hr><h3 align="center">9. Analizar e interpretar los datos</h3>
+
+<p>
+Tr&aacute;s la realizaci&oacute;n de todas las pruebas y la anotaci&oacute;n de los resultados obtenemos:
+</p>
+
+<table summary="Resultados" id="hor-minimalist-a">
+<thead>
+<tr><th></th><th><span style="color: green;">Disco 1</span></th><th>Disco 2</th><th>Disco 3</th><th>Disco 4</th></tr>
+</thead>
+<tfoot><tr><td colspan="6">
+NOTA: El valor superior es el resultado con la conexi&oacute;n IDE y el inferior con la conexi&oacute;n USB.
+</td></tr></tfoot>
+<tbody>
+
+<tr><th>Velocidad de lectura (MB/s)</th>
+	<td><span style="color: green;">17.11<br>11.62</span></td>
+	<td>40.51<br>15.89</td>
+	<td>55.09<br>20.74</td>
+	<td><span style="color: red;">57.04<br>21.47</span></td>
+</tr>
+
+<tr><th>Saltos aleatorios por segundo</th>
+	<td><span style="color: green;">78.5<br>81.0</span></td>
+	<td>142.7<br>129.5</td>
+	<td><span style="color: red;">166.6</span><br><span style="color: red;">136.7</span></td>
+	<td>140.6<br>113.1</td>
+</tr>
+
+</tbody>
+</table>
+
+<p>
+En rojo resalto el valor que ha obtenido el mejor resultado.
+Tambi&eacute;n he resaltado en verde los valores pertenecientes al <span style="font-style: italic;">Disco 1</span> ya que es el que obtiene resultados m&aacute;s bajos y por ello me es &uacute;til para utilizarlo como base para el c&aacute;lculo de los &iacute;ndices.
+</p>
+<p>
+Podemos observar en los resultados obtenidos que los valores correspondientes a los saltos/segundo no difieren practicamente en la conexi&oacute;n IDE/USB, sin embargo, la velocidad de lectura que se v&eacute; altamente reducida:
+</p>
+
+<div class="figure" style="width: 522px ; height: 370px ; ">
+  <p><img src="grafica1.png" width="425"
+    height="315" alt="Grafica 1">
+  <p>Velocidades de lectura de disco (MB/s)
+</div>
+
+<p>
+En la gr&aacute;fica superior se puede observar claramente este hecho; la velocidad se reduce un <span style="font-style: italic;">30%</span> en el mejor de los casos, en el peor llega a reducirse hasta un <span style="font-style: italic;">62%</span>, algo bastante raro, ya que supuestamente la especificaci&oacute;n de USB 2.0 garantiza hasta <span style="font-style: italic;">60 MB/s</span> de transferencia.
+</p>
+<p>
+Observando los resultados detenidamente parece que existe una cota superior en cuanto a la tranferencia con la conexi&oacute;n USB, este l&iacute;mite se sit&uacute;a en torno a los <span style="font-style: italic;">20-25 MB/s</span> y puede ser impuesto por la propia interfaz USB utilizada debido a su propia tecnolog&iacute;a de fabricaci&oacute;n.
+</p>
+
+<p>
+Resultados calculados escogiendo el <span style="font-style: italic;">Disco 1</span> como base (<span style="font-style: italic;">HB</span> en todos los casos):
+</p>
+
+<table summary="Resultados" id="hor-minimalist-a">
+<thead>
+<tr><th></th><th><span style="color: green;">Disco 1</span></th><th>Disco 2</th><th>Disco 3</th><th>Disco 4</th></tr>
+</thead>
+<tfoot><tr><td colspan="6">
+NOTA: El valor superior es el resultado con la conexi&oacute;n IDE y el inferior con la conexi&oacute;n USB.
+</td></tr></tfoot>
+<tbody>
+
+<tr><th>Velocidad de lectura (MB/s)</th>
+	<td><span style="color: green;">1.00<br>1.00</span></td>
+	<td>2.37<br>1.37</td>
+	<td>3.22<br>1.78</td>
+	<td><span style="color: red;">3.33<br>1.85</span></td>
+</tr>
+
+<tr><th>Saltos aleatorios por segundo</th>
+	<td><span style="color: green;">1.00<br>1.00</span></td>
+	<td>1.82<br>1.60</td>
+	<td><span style="color: red;">2.12<br>1.69</span></td>
+	<td>1.79<br>1.40</td>
+</tr>
+
+</tbody>
+</table>
+
+<p>
+Y representaci&oacute;n gr&aacute;fica de los mismos:
+</p>
+<p>
+<span style="font-style: italic;">NOTA: Resulta bastante obvio no representar al Disco 1, ya que todos sus valores son 1, me interesa m&aacute;s representar todos los resultados respecto a &eacute;l.</span>
+</p>
+
+<div class="figure" style="width: 563px ; height: 453px ; ">
+  <p><img src="grafica2.png" width="507"
+    height="398" alt="Grafica 2">
+  <p>Representaci&oacute;n de los &iacute;ndices
+</div>
+
+<p>
+Observando detenidamente los resultados podemos afirmar que tenemos un <span style="font-weight: bold;">empate t&eacute;cnico</span> en cuanto a resultados, por un lado el el <span style="font-style: italic;">Disco 4</span> es el ganador en lo que respecta a velocidad de lectura, algo l&oacute;gico ya que es de mayor capacidad y posiblemente construido con una tecnolog&iacute;a m&aacute;s nueva y m&aacute;s r&aacute;pida que el resto. Recordemos que en esta prueba todos los discos est&aacute;n en igualdad de condiciones debido a que  es indiferente el sistema de archivos.
+</p>
+<p>
+Sin embargo, esto no ocurre en la prueba de <span style="font-style: italic;">saltos aleatorios</span> en la que se lleva la palma el <span style="font-style: italic;">Disco 3</span>.
+Como sabemos, esta prueba <span style="font-weight: bold;">no es independiente</span> del sistema de archivos, algo que puede influir negativamente en el resultado del <span style="font-style: italic;">Disco 4</span> debido a su sistema de archivos (<span style="font-style: italic;">NTFS</span>).
+</p>
+
+<p>
+Alternativamente podemos sumar las puntuaciones y obtener cual ha sido el disco de mejor comportamiento para los dos tipos de conexi&oacute;n, aunque cabe esperar que sea el mismo:
+</p>
+
+
+<table summary="Resultados" id="hor-minimalist-a">
+<thead>
+<tr><th></th><th>Disco 2</th><th>Disco 3</th><th>Disco 4</th></tr>
+</thead>
+<tfoot><tr><td colspan="6">
+NOTA: De nuevo en rojo el <span style="font-weight: bold;">ganador</span>
+</td></tr></tfoot>
+<tbody>
+
+<tr><th>Puntaci&oacute;n IDE</th>
+	<td>4.19</td>
+	<td><span style="color: red;">5.34</span></td>
+	<td>5.12</td>
+</tr>
+
+<tr><th>Puntaci&oacute;n USB</th>
+	<td>2.97</td>
+	<td><span style="color: red;">3.47</span></td>
+	<td>3.24</td>
+</tr>
+
+</tbody>
+</table>
+
+<p>
+Representado graficamente:
+</p>
+
+<div class="figure" style="width: 574px ; height: 420px ; ">
+  <p><img src="grafica3.png" width="518"
+    height="365" alt="Interfaz USB">
+  <p>Puntuaciones
+</div>
+
+<p>
+Definitivamente podemos afirmar que nuestro <span style="font-weight: bold;">ganador</span> para ambos tipos de conexiones es el <span style="font-style: italic;">Disco 3</span> (seguido de cerca por el <span style="font-style: italic;">Disco 4</span>), ya que aunque no sea el de mejor puntuaci&oacute;n en la prueba de <span style="font-style: italic;">lectura</span> su resultado en la prueba de <span style="font-style: italic;">saltos</span> lo compensa.
+</p>
+
+<a id="10"></a><hr><h3 align="center">10. Presentar los resultados</h3>
+<p>
+Si analizados los resultados de las pruebas independientemente, la elecci&oacute;n del disco depender&aacute; de las necesidades de nuestra base de datos, es decir, ya que el <span style="font-style: italic;">Disco 4</span> (con <span style="font-style: italic;">NTFS</span>) obtiene la mejor puntuaci&oacute;n en la prueba de lectura nos ser&aacute; m&aacute;s &uacute;til para bases de datos en las que las tuplas contengan muchos elementos o bien que los datos sean leidos consecutivamente (p.e. sean frecuentes los listados).
+</p>
+<p>
+Sin embargo, el <span style="font-style: italic;">Disco 3</span> (con <span style="font-style: italic;">XFS</span>) ser&aacute; m&aacute;s &uacute;til para bases de datos en las cuales los datos son accedidos de forma m&aacute;s espont&aacute;nea y desordenada y las tuplas m&aacute;s reducidas.
+</p>
+
+<p>
+Pero si tenemos en cuenta el conjunto de las dos pruebas, claramente elegiremos el <span style="font-style: italic;">Disco 3</span>.
+</p>
+
+<p>
+Por &uacute;ltimo concluir que almacenar la base de datos en un medio externo USB reducir&iacute;a mucho las velocidades de transferencia, por lo que utilizar&eacute; una conexi&oacute;n IDE.
+</p>
+
+<hr>
+<h3>Rub&eacute;n Dugo Mart&iacute;n &lt;raubn.zero@gmail.com&gt;</h3>
+<h4>rdugomartin en YahooGROUPS</h4>
+
+</body>
+</html>

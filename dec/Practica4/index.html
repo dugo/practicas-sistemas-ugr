@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+<title>[DYEC] Practica 4</title>
+<link rel="stylesheet" type="text/css" href="estilo.css">
+
+<style type="text/css">
+
+p {
+	font: normal .9em Arial, Helvetica, sans-serif;
+	color: #000000;
+	text-align: justify;
+}
+
+p a {
+	color: #000000;
+}
+
+h1 {
+	text-align: center;
+}
+
+h3 {
+	border-top:0.042em solid #CCCCCC;
+	font-size:1.5em;
+	letter-spacing:-0.042em;
+	line-height:1em;
+	margin:1em 0;
+	padding-top:1em;
+}
+
+.cursiva {
+	font-style: italic;
+}
+
+img {
+	display: block;
+	margin: auto;
+} 
+
+body.hl	{ background-color:#ffffff; }
+pre.hl	{ color:#000000; background-color:#ffffff; font-size:10pt; font-family:Courier New;}
+.num	{ color:#2928ff; }
+.esc	{ color:#ff00ff; }
+.str	{ color:#ff0000; }
+.dstr	{ color:#818100; }
+.slc	{ color:#838183; font-style:italic; }
+.com	{ color:#838183; font-style:italic; }
+.dir	{ color:#008200; }
+.sym	{ color:#000000; }
+.line	{ color:#555555; }
+.kwa	{ color:#000000; font-weight:bold; }
+.kwb	{ color:#830000; }
+.kwc	{ color:#000000; font-weight:bold; }
+.kwd	{ color:#010181; }
+
+</style>
+
+</head>
+
+<body>
+<h1>Dise&ntilde;o y evaluaci&oacute;n de computadores</h1>
+<h2>Pr&aacute;ctica 4: Uso de programas de monitorizaci&oacute;n de un sistema</h2>
+
+<h3>Introducci&oacute;n</h3>
+
+<p>
+El objetivo de la pr&aacute;ctica que he realizado es ver como el sistema se comporta a un uso intensivo de CPU y memoria, para ello voy a tomar mediciones cada <span class="cursiva">x</span> segundos de los valores de RAM/SWAP ocupados y de la carga media de la CPU (en 1, 5 y 15 minutos) tanto con el sistema en estado base como realizando una tarea (o carga).
+La tarea elegida se trata de la codificaci&oacute;n de un video del formato XviD a VCD mediante el programa <span class="cursiva">ffmpeg</span>.
+</p>
+
+<p>
+Para facilitarme obtener los datos he escrito un script para Bash que escribe en la salida est&aacute;ndar la informaci&oacute;n.
+Los valores correspondientes a la memoria los obtengo del fichero <span class="cursiva">/proc/meminfo</span> que me proporciona el kernel y los correspondientes a la carga mediante <span class="cursiva">uptime</span>.
+Los valores son mostrados totalmente ordenados y tabulados, haciendo de esta forma f&aacute;cil la inserci&oacute;n en un programa de hojas de c&aacute;lculo para realizar diversos an&aacute;lisis y gr&aacute;ficos.
+</p>
+<p>
+Inicialmente el script muestra datos sobre el sistema, m&aacute;s adelante muestra durante 30 minutos los valores del sistema sin carga, los valores son mostrados cada 20 segundos.
+Despu&eacute;s el programa ejecuta el programa de conversi&oacute;n de video y realiza exactamente lo mismo que antes, para despu&eacute;s de los 30 minutos matar el proceso (me he asegurado que la ejecuci&oacute;n dure m&aacute;s de este tiempo).
+</p>
+<p>
+El c&oacute;digo del script es el siguiente:
+</p>
+
+<pre class="hl"><span class="slc">	#!/bin/bash</span>
+
+	TMP<span class="sym">=</span><span class="str">`cat /proc/meminfo |grep MemTotal`</span>
+	TMP<span class="sym">=</span>$<span class="sym">{</span>TMP<span class="sym">%</span><span class="str">' '</span><span class="sym">*</span>B<span class="sym">}</span>
+	TOTALMEM<span class="sym">=</span>$<span class="sym">{</span>TMP<span class="slc">##M*' '}</span>
+	TIMEZERO<span class="sym">=</span><span class="str">`date +%s`</span>
+	SLEEPTIME<span class="sym">=</span><span class="num">20</span>
+	TESTTIME<span class="sym">=</span><span class="num">1800</span>
+
+	<span class="kwa">function</span> printheader<span class="sym">()</span>
+	<span class="sym">{</span>
+		<span class="kwb">echo</span> $<span class="str">'RAM Ocupada</span><span class="esc">\t</span><span class="str">SWAP Ocupada</span><span class="esc">\t</span><span class="str">Carga</span><span class="esc">\t\t\t</span><span class="str">Tiempo'</span>
+		<span class="kwb">echo</span> $<span class="str">'-----------</span><span class="esc">\t</span><span class="str">------------</span><span class="esc">\t</span><span class="str">-----</span><span class="esc">\t\t\t</span><span class="str">------'</span>
+	<span class="sym">}</span>
+
+	<span class="kwa">function</span> printinfo<span class="sym">()</span>
+	<span class="sym">{</span>
+		TMP<span class="sym">=</span><span class="str">`cat /proc/meminfo |grep SwapCached`</span>
+		TMP<span class="sym">=</span>$<span class="sym">{</span>TMP<span class="sym">%</span><span class="str">' '</span><span class="sym">*</span>B<span class="sym">}</span>
+		SWAP<span class="sym">=</span>$<span class="sym">{</span>TMP<span class="slc">##S*' '}</span>
+
+		TMP<span class="sym">=</span><span class="str">`cat /proc/meminfo |grep MemFree`</span>
+		TMP<span class="sym">=</span>$<span class="sym">{</span>TMP<span class="sym">%</span><span class="str">' '</span><span class="sym">*</span>B<span class="sym">}</span>
+		TMP<span class="sym">=</span>$<span class="sym">{</span>TMP<span class="slc">##M*' '}</span>
+		<span class="kwb">let</span> MEM<span class="sym">=</span><span class="kwb">$TOTALMEM</span><span class="sym">-</span><span class="kwb">$TMP</span>
+
+		TMP<span class="sym">=</span><span class="str">`uptime|cut -f12- -d&quot; &quot;`</span>
+		LOAD<span class="sym">=</span>$<span class="sym">{</span>TMP<span class="sym">//</span><span class="str">', '</span><span class="sym">/</span>$<span class="str">'</span><span class="esc">\t</span><span class="str">'</span><span class="sym">}</span>
+
+		<span class="kwb">let</span> TIME<span class="sym">=</span><span class="str">`date +%s`</span><span class="sym">-</span><span class="kwb">$TIMEZERO</span>
+
+		<span class="kwb">echo $MEM</span>$<span class="str">'</span><span class="esc">\t\t</span><span class="str">'</span><span class="kwb">$SWAP</span>$<span class="str">'</span><span class="esc">\t\t</span><span class="str">'</span><span class="kwb">$LOAD</span>$<span class="str">'</span><span class="esc">\t\t</span><span class="str">'</span><span class="kwb">$TIME</span>
+	<span class="sym">}</span>
+
+
+	<span class="kwb">echo</span> <span class="str">&quot;Sistema&quot;</span>
+	<span class="kwb">echo</span> <span class="str">&quot;=======&quot;</span>
+	TMP<span class="sym">=</span><span class="str">`cat /proc/cpuinfo |grep &quot;model name&quot;`</span>
+	<span class="kwb">echo</span> $<span class="sym">{</span>TMP<span class="slc">#m*:}</span>
+	cat <span class="sym">/</span>proc<span class="sym">/</span>meminfo <span class="sym">|</span>grep MemTotal
+	cat <span class="sym">/</span>proc<span class="sym">/</span>meminfo <span class="sym">|</span>grep SwapTotal
+	ffmpeg <span class="sym">-</span>version
+	w
+
+	<span class="kwb">echo</span>
+	<span class="kwb">echo</span> <span class="str">&quot;Estado actual&quot;</span>
+	<span class="kwb">echo</span> <span class="str">&quot;=============&quot;</span>
+
+	printheader
+	printinfo
+
+	<span class="kwb">echo</span>
+	<span class="kwb">echo</span> <span class="str">&quot;Fichero&quot;</span>
+	<span class="kwb">echo</span> <span class="str">&quot;=======&quot;</span>
+	file video.avi
+	ls <span class="sym">-</span>l video.avi
+
+	<span class="kwb">echo</span>
+	<span class="kwb">echo</span> <span class="str">&quot;La informacion sera mostrada cada &quot;</span><span class="kwb">$SLEEPTIME</span><span class="str">&quot; segundo(s).&quot;</span>
+	<span class="kwb">echo</span> <span class="str">&quot;Ambos test duraran &quot;</span><span class="kwb">$TESTTIME</span><span class="str">&quot; segundos.&quot;</span>
+
+	<span class="kwb">echo</span>
+	<span class="kwb">echo</span> <span class="str">&quot;Test con el ordenador en el estado</span> <span class="esc">\&quot;</span><span class="str">base</span><span class="esc">\&quot;</span><span class="str">&quot;</span>
+	<span class="kwb">echo</span> <span class="str">&quot;====&quot;</span>
+
+	printheader
+
+	TIMEZERO<span class="sym">=</span><span class="str">`date +%s`</span>
+	COUNT<span class="sym">=</span><span class="num">0</span>
+	<span class="kwa">until</span> <span class="sym">[</span> <span class="kwb">$COUNT</span> <span class="sym">-</span>gt <span class="kwb">$TESTTIME</span> <span class="sym">];</span> <span class="kwa">do</span>
+		printinfo
+		<span class="kwb">let</span> COUNT<span class="sym">=</span><span class="kwb">$COUNT</span><span class="sym">+</span><span class="kwb">$SLEEPTIME</span>
+		sleep <span class="kwb">$SLEEPTIME</span>
+	<span class="kwa">done</span>
+
+	<span class="kwb">echo</span>
+	<span class="kwb">echo</span> <span class="str">&quot;Test ejecutando 'ffmpeg -i video.avi -target pal-vcd video.mpg 2&gt; /dev/null&amp;'...&quot;</span>
+	<span class="kwb">echo</span> <span class="str">&quot;====&quot;</span>
+
+	printheader
+
+	ffmpeg <span class="sym">-</span>i video.avi <span class="sym">-</span>target pal<span class="sym">-</span>vcd video.mpg <span class="num">2</span><span class="sym">&gt; /</span>dev<span class="sym">/</span>null<span class="sym">&amp;</span>
+
+	TIMEZERO<span class="sym">=</span><span class="str">`date +%s`</span>
+	COUNT<span class="sym">=</span><span class="num">0</span>
+	<span class="kwa">until</span> <span class="sym">[</span> <span class="kwb">$COUNT</span> <span class="sym">-</span>gt <span class="kwb">$TESTTIME</span> <span class="sym">];</span> <span class="kwa">do</span>
+		printinfo
+		<span class="kwb">let</span> COUNT<span class="sym">=</span><span class="kwb">$COUNT</span><span class="sym">+</span><span class="kwb">$SLEEPTIME</span>
+		sleep <span class="kwb">$SLEEPTIME</span>
+	<span class="kwa">done</span>
+
+	killall ffmpeg
+
+	<span class="kwb">echo</span>
+	<span class="kwb">echo</span> <span class="str">&quot;Finalizado&quot;</span>
+	<span class="kwb">echo</span> <span class="str">&quot;==========&quot;</span>
+</pre>
+
+
+<p>
+En <a href="salida">este</a> fichero podemos ver la salida que abajo paso a analizar.
+</p>
+
+<h3>Resultados</h3>
+
+<p>
+En la m&aacute;quina en la que se realiza el an&aacute;lisis se est&aacute; ejecutando Gnome entre otros programas propios del sistema, sin embargo, se deja que el script trabaje y ning&uacute;n usuario realiza ninguna tarea durante ese tiempo.
+</p>
+
+<p>
+<img src="RAM.png" alt="RAM">
+En la gr&aacute;fica superior se puede observar como en el caso base el sistema no "consume" memoria RAM, en todo caso libera, ya que el sistema est&aacute; recien arrancado y libera memoria de algunos programas que despu&eacute;s del arranque no son &uacute;tiles.
+</p>
+<p>
+Sin embargo, con carga, el sistema va consumiendo la RAM hasta estabilizarse a aproximadamente 500MB. Esto puede ser porque el sistema comienza a intercambiar en SWAP (recordemos que trabajamos con 496MB de RAM). Pasemos a ver la SWAP:
+</p>
+
+<p>
+<img src="SWAP.png" alt="SWAP">
+Vemos que el sistema no ha necesitado apenas intercambiar en SWAP, luego descartamos la hip&oacute;tesis anterior. Aqu&iacute; pueden ocurrir dos cosas; el programa detecta la RAM de que disponemos y evita que se tenga que intercambiar a SWAP controlando continuamente la memoria que va utilizando (algo que dispara el consumo de CPU) o bien que se d&eacute; la casualidad de que el programa no necesita m&aacute;s RAM justo en el momento en que esta llena (vaya casualidad).
+</p>
+<p>
+Analizando el consumo de CPU me inclino m&aacute;s por la primera opci&oacute;n.
+</p>
+
+<br>
+<p>
+<img src="Carga1.png" alt="Carga media de un minuto">
+Aqu&iacute; vemos como en el sistema en reposo el valor es m&iacute;nimo, salvo al comienzo, normal debido al arranque (podemos observar que conforme avanza el tiempo disminuye), y peque&ntilde;os picos que se pueden deber a tareas administrativas y autom&aacute;ticas del sistema.
+</p>
+<p>
+Con el sistema con carga vemos como la media aumenta paulatinamenta hasta estabilizarse en 1. Los picos que da la gr&aacute;fica por encima de 1 se deben a que hay muchos procesos en la cola de espera en la CPU (sobrecarga!!!).
+</p>
+
+<p>
+<img src="Carga2.png" alt="Carga media de 5 minutos">
+Ocurre practicamente lo mismo que en el caso anterior; en el caso base la media tiende a ser 0, mientras que en el caso con carga se estabiliza en 1.
+</p>
+
+<p>
+<img src="Carga3.png" alt="Carga media de 15 minutos">
+Lo mismo que en los casos anteriores, salvo que no le da tiempo a llegar a 1 en el caso con carga.
+</p>
+
+
+<h3>Problemas detectados</h3>
+
+<p>
+Observando los datos, podemos ver que entorno a los segundos 160 y 1200 se produce sobrecarga en la CPU, esto significa que hay muchos procesos esperando para entrar en la CPU y esto nos hace afirmar que el equipo actual necesitaria una CPU mayor para este tipo de tareas.
+</p>
+<p>
+No obstante, tambi&eacute;n vemos que casi todo el tiempo durante el an&aacute;lisis se est&aacute; a punto de saturar la RAM, por lo que tambien se hace patente la necesidad de mayor capacidad RAM del sistema. 
+</p>
+
+<br>
+<h3>Rub&eacute;n Dugo Mart&iacute;n &lt;raubn.zero@gmail.com&gt;</h3>
+<h4>rdugomartin en YahooGROUPS</h4>
+
+
+<p>
+	<a href="http://validator.w3.org/"><img
+	src="http://www.w3.org/Icons/valid-html401-blue"
+	alt="Valid HTML 4.1!" height="31" width="88" border=0 ></a>
+
+	<a href="http://jigsaw.w3.org/css-validator/"><img
+	src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+	alt="Valid CSS!" height="31" width="88" border=0 ></a>
+</p>
+
+</body>
+</html>

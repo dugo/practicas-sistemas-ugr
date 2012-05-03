@@ -1,0 +1,96 @@
+#!/bin/bash
+
+	TMP=`cat /proc/meminfo |grep MemTotal`
+	TMP=${TMP%' '*B}
+	TOTALMEM=${TMP##M*' '}
+	TIMEZERO=`date +%s`
+	SLEEPTIME=20
+	TESTTIME=1800
+
+	function printheader()
+	{
+		echo $'RAM Ocupada\tSWAP Ocupada\tCarga\t\t\tTiempo'
+		echo $'-----------\t------------\t-----\t\t\t------'
+	}
+
+	function printinfo()
+	{
+		TMP=`cat /proc/meminfo |grep SwapCached`
+		TMP=${TMP%' '*B}
+		SWAP=${TMP##S*' '}
+
+		TMP=`cat /proc/meminfo |grep MemFree`
+		TMP=${TMP%' '*B}
+		TMP=${TMP##M*' '}
+		let MEM=$TOTALMEM-$TMP
+
+		TMP=`uptime|cut -f12- -d" "`
+		LOAD=${TMP//', '/$'\t'}
+
+		let TIME=`date +%s`-$TIMEZERO
+
+		echo $MEM$'\t\t'$SWAP$'\t\t'$LOAD$'\t\t'$TIME
+	}
+
+
+	echo "Sistema"
+	echo "======="
+	TMP=`cat /proc/cpuinfo |grep "model name"`
+	echo ${TMP#m*:}
+	cat /proc/meminfo |grep MemTotal
+	cat /proc/meminfo |grep SwapTotal
+	ffmpeg -version
+	w
+
+	echo
+	echo "Estado actual"
+	echo "============="
+
+	printheader
+	printinfo
+
+	echo
+	echo "Fichero"
+	echo "======="
+	file video.avi
+	ls -l video.avi
+
+	echo
+	echo "La informacion sera mostrada cada "$SLEEPTIME" segundo(s)."
+	echo "Ambos test duraran "$TESTTIME" segundos."
+
+	echo
+	echo "Test con el ordenador en el estado \"base\""
+	echo "===="
+
+	printheader
+
+	TIMEZERO=`date +%s`
+	COUNT=0
+	until [ $COUNT -gt $TESTTIME ]; do
+		printinfo
+		let COUNT=$COUNT+$SLEEPTIME
+		sleep $SLEEPTIME
+	done
+
+	echo
+	echo "Test ejecutando 'ffmpeg -i video.avi -target pal-vcd video.mpg 2> /dev/null&'..."
+	echo "===="
+
+	printheader
+
+	ffmpeg -i video.avi -target pal-vcd video.mpg 2> /dev/null&
+
+	TIMEZERO=`date +%s`
+	COUNT=0
+	until [ $COUNT -gt $TESTTIME ]; do
+		printinfo
+		let COUNT=$COUNT+$SLEEPTIME
+		sleep $SLEEPTIME
+	done
+
+	killall ffmpeg
+
+	echo
+	echo "Finalizado"
+	echo "=========="

@@ -1,0 +1,338 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+<title>[DYEC] Practica 6</title>
+<style type="text/css">
+
+body {
+	color: black; background: white;
+}
+
+hr {
+	color: #1E90FF;
+	background-color: #1E90FF;
+	height: 1px;
+	width: 80%;
+}
+
+p {
+	text-indent: 2em; margin-top: 20; margin-bottom: 0;
+	margin-left: 5%; margin-right: 5%;
+	font: normal .9em Arial, Helvetica, sans-serif;
+	color: #000000;
+	text-align: justify;
+}
+
+li {
+	margin-left: 5%; margin-right: 5%;
+	margin-top: 10; margin-bottom: 0;
+	font: normal .9em Arial, Helvetica, sans-serif;
+	color: #000000;
+	text-align: justify;
+}
+
+p a {
+	color: #000000;
+}
+
+h1 {
+	text-align: center;
+}
+
+div.figure {
+	float: none;
+	border: thin silver solid;
+	margin: 2em auto 2em auto;
+	padding: 0.5em 0.5em 0.5em 0.5em;
+	align: center;
+}
+div.figure p {
+  text-align: center;
+  font-style: italic;
+  font-size: smaller;
+  text-indent: 0;
+}
+
+#hor-minimalist-a
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	background: #fff;
+	margin: 3em auto 3em auto;
+	width: auto;
+	border-collapse: collapse;
+	text-align: left;
+	align: center;
+}
+#hor-minimalist-a thead th
+{
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	color: #039;
+	padding: 10px 8px;
+	border-bottom: 2px solid #6678b1;
+}
+#hor-minimalist-a tbody th
+{
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	color: #039;
+	padding: 10px 8px;
+}
+#hor-minimalist-a td
+{
+	color: #669;
+	text-align: center;
+	padding: 4px 4px 4px 4px;
+}
+
+#hor-minimalist-a tfoot th
+{
+	border-top: 2px solid #6678b1;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	color: #039;
+	padding: 10px 8px;
+}
+
+#hor-minimalist-a tfoot td
+{
+	border-top: 2px solid #6678b1;
+	color: #669;
+	text-align: center;
+	font-weight: bold;
+	padding: 4px 4px 4px 4px;
+}
+
+</style>
+</head>
+<body>
+<h1>Dise&ntilde;o y evaluaci&oacute;n de computadores</h1>
+<h2>Pr&aacute;ctica 6: Programaci&oacute;n de un benchmark portable</h2>
+<hr>
+
+<p>
+Los objetivos de la pr&aacute;ctica son claros; evaluaci&oacute;n y comparaci&oacute;n del rendimiento de diferentes equipos, los par&aacute;metros a evaluar son los siguientes:
+<ul>
+<li><span style="font-weight: bold;">Operaciones en coma flotante</span>: El benchmark realiza varias veces una operaci&oacute;n sencilla con n&uacute;meros en coma flotante de forma que tengamos una medida aproximada de las operaciones en coma flotante por segundo (MFlops).</li>
+<li><span style="font-weight: bold;">Operaciones con enteros</span>: De la misma forma, se realizar&aacute; una operaci&oacute;n sencilla con enteros de forma que obtengamos una aproximaci&oacute;n a las millones de operaciones con enteros por segundo (MOps, las he llamado en este caso, ya que no son exactamente MIPS).</li>
+<li><span style="font-weight: bold;">Escritura en disco</span>: El benchmark escribir&aacute; en un fichero en el disco (en el directorio actual) varios bloques de diferente tama&ntilde;o para de esta forma obtener mediante la media obtener un aproximaci&oacute;n a la velocidad de lectura.</li>
+<li><span style="font-weight: bold;">Lectura de disco</span>: Igual que el anterior, se leer&aacute; de un fichero en disco varios bloques de diferente tama&ntilde;o.</li>
+<li><span style="font-weight: bold;">Memoria</span>: El benchmark copiar&aacute; de una zona de memoria a otra bloques de diferente tama&ntilde;o, utilizando la memoria din&aacute;mica (heap) de forma que con la media obtendremos una aproximaci&oacute;n a la velocidad de la memoria.</li>
+</ul>
+</p>
+<p>
+Los resultados son obtenidos mediante las medias aritm&eacute;ticas de varias repeticiones para que afecte lo menos posible el funcionamiento del sistema y, en el caso de los test de E/S de disco y memoria se repetir&aacute;n tambi&eacute;n con distintos tama&ntilde;os de bloque.
+</p>
+<p>
+Los &iacute;ndices se calculan en base a lo contenido en el fichero <span style="font-style: italic;">base.h</span>, estos valores han sido obtenidos con este mismo benchmark de un equipo con una configuraci&oacute;n hardware obsoleta.
+</p>
+<p>
+En lo relativo a la portabilidad el benchmark, he tenido mucho cuidado de elegir las funciones de C (lenguaje en el que est&aacute; programado) que cumplan el est&aacute;ndar <span style="font-style: italic;">ANSI C</span> para de esta forma obtener una total portabilidad.
+Tambi&eacute;n es relevante la forma en que realizo la compilaci&oacute;n para MS Windows; hago uso de un fichero Makefile.win (compilar&iacute;amos con <span class="talic">make -f Makefile.win</span>) de forma que con la utilidad MinGW (en Debian son necesarios al menos los paquetes mingw32, mingw32-binutils y mingw32-runtime) realizo una compilaci&oacute;n cruzada y de esta forma obtengo un fichero binario para dicha plataforma.
+Aunque no es necesario que nos preocupemos de las compilaciones ya que en el directorio <span style="font-style: italic;">bin</span> incluyo ya los ejecutables compilados para Linux y MS Windows.
+</p>
+
+<div class="figure" style="width: 630px ; height: 250px ; ">
+  <p><img src="benchmark.png" width="574"
+    height="195" alt="Salida del benchmark">
+  <p>Ejemplo de ejecuci&oacute;n del benchmark en GNU/Linux
+</div>
+
+<p>
+He evaluado mediante el benchmark las siguientes configuraciones:
+</p>
+<p>
+<span style="font-style:italic;">NOTA: A partir de ahora resaltar&eacute; en verde la informaci&oacute;n del equipo tomado como base (Configuraci&oacute;n 1).</span>
+</p>
+
+<table summary="Configuraciones" id="hor-minimalist-a">
+<thead>
+<tr><th></th><th><span style="color: green;">Configuraci&oacute;n 1</span></th><th>Configuraci&oacute;n 2</th><th>Configuraci&oacute;n 3</th><th>Configuraci&oacute;n 4</th></tr>
+</thead>
+<tbody>
+
+<tr><th>Modelo</th>
+	<td><span style="color: green;">-</span></td>
+	<td>-</td>
+	<td>HP Compaq nx6110</td>
+	<td>-</td>
+</tr>
+
+<tr><th>Procesador</th>
+	<td><span style="color: green;">Intel Pentium II 450 MHz</span></td>
+	<td>AMD Athlon XP 2100+ (1.73 GHz)</td>
+	<td>Pentium M 730 1.6GHz</td>
+	<td>Pentium 4 2.00 GHz</td>
+</tr>
+
+
+<tr><th>RAM</th>
+	<td><span style="color: green;">320 MB SDRAM</span></td>
+	<td>512 MB DDR</td>
+	<td>512 MB DDR</td>
+	<td>512 MB DDR</td>
+</tr>
+
+
+<tr><th>Sistema operativo</th>
+	<td><span style="color: green;">Windows 98 SE</span></td>
+	<td>Ubuntu 8.04.2</td>
+	<td>Debian 5.0 (Lenny)</td>
+	<td>Windows XP SP2</td>
+</tr>
+
+<tr><th>Disco duro</th>
+	<td><span style="color: green;">Maxtor 90871U2 8.4 GB</span></td>
+	<td>Seagate Barracuda 40 GB</td>
+	<td>Hitachi Travelstar 80 GB</td>
+	<td>Fujitsu 40 GB</td>
+</tr>
+
+</tbody>
+</table>
+
+<p>
+Obtenemos los siguientes resultados en t&eacute;rminos absolutos, como de costumbre, los tests han sido ejecutados con el sistema recien arrancado, en estado base y se han realizado 5 repeticiones para alcanzar una precisi&oacute;n aceptable:
+</p>
+
+
+<table summary="Resultados absolutos" id="hor-minimalist-a">
+<thead>
+<tr><th></th><th><span style="color: green;">Configuraci&oacute;n 1</span></th><th>Configuraci&oacute;n 2</th><th>Configuraci&oacute;n 3</th><th>Configuraci&oacute;n 4</th></tr>
+</thead>
+<tbody>
+
+<tr><th>Coma flotante</th>
+	<td><span style="color: green;">70.8 MFlops</span></td>
+	<td>305.1 MFlops</td>
+	<td>244.2 MFlops</td>
+	<td><span style="color: red;">345.5 MFlops</span></td>
+</tr>
+
+<tr><th>Enteros</th>
+	<td><span style="color: green;">71.0 MOps</span></td>
+	<td>303.9 MOps</td>
+	<td>244.6 MOps</td>
+	<td><span style="color: red;">331.0 MOps</span></td>
+</tr>
+
+
+<tr><th>Escritura en disco</th>
+	<td><span style="color: green;">7184.1 KB/s</span></td>
+	<td><span style="color: red;">35202.7 KB/s<span style="color: red;"></span></td>
+	<td>18186.0 KB/s</td>
+	<td>5820.3 KB/s</td>
+</tr>
+
+
+<tr><th>Lectura de disco</th>
+	<td><span style="color: green;">72029.6 KB/s</span></td>
+	<td>171340.6 KB/s</td>
+	<td>206151.4 KB/s</td>
+	<td><span style="color: red;">206575.9 KB/s</span></td>
+</tr>
+
+<tr><th>Memoria</th>
+	<td><span style="color: green;">27391.6 KB/s</td></span>
+	<td><span style="color: red;">111295.9 KB/s</span></td>
+	<td>98544.9 KB/s</td>
+	<td>110497.2 KB/s</td>
+</tr>
+
+</tbody>
+</table>
+
+<p>
+Podemos ver que se han obtenido valores anormalmente altos en las lecturas de disco, algo posible ya que el disco o el sistema ha mantenido en la cach&eacute; lo &uacute;ltimo que hemos escrito, es decir, tiene en cach&eacute; precisamente lo que vamos a leer.
+</p>
+
+<p>
+Esta tabla representa los resultados en &iacute;ndices (mayor es mejor para todos los casos):
+</p>
+
+<table summary="Indices" id="hor-minimalist-a">
+<thead>
+<tr><th></th><th><span style="color: green;">Configuraci&oacute;n 1</span></th><th>Configuraci&oacute;n 2</th><th>Configuraci&oacute;n 3</th><th>Configuraci&oacute;n 4</th></tr>
+</thead>
+<tfoot><th>Puntuaci&oacute;n</th>
+<td><span style="color: green;">5.0</span></td>
+<td><span style="color: red;">23.9</span></td>
+<td>20.5</td>
+<td>22.0</td>
+</tfoot>
+<tbody>
+
+<tr><th>Coma flotante</th>
+	<td><span style="color: green;">1.0</span></td>
+	<td>4.3</td>
+	<td>3.4</td>
+	<td><span style="color: red;">4.9</span></td>
+</tr>
+
+<tr><th>Enteros</th>
+	<td><span style="color: green;">1.0</span></td>
+	<td>4.3</td>
+	<td>3.4</td>
+	<td><span style="color: red;">4.7</span></td>
+</tr>
+
+
+<tr><th>Escritura en disco</th>
+	<td><span style="color: green;">1.0</span></td>
+	<td><span style="color: red;">4.9</span></td>
+	<td>2.5</td>
+	<td>0.8</td>
+</tr>
+
+
+<tr><th>Lectura de disco</th>
+	<td><span style="color: green;">1.0</span></td>
+	<td>6.3</td>
+	<td>7.6</td>
+	<td><span style="color: red;">7.6</span></td>
+</tr>
+
+<tr><th>Memoria</th>
+	<td><span style="color: green;">1.0</td></span>
+	<td><span style="color: red;">4.1</span></td>
+	<td>3.6</td>
+	<td>4.0</td>
+</tr>
+
+</tbody>
+</table>
+
+<p>
+Y su representaci&oacute;n gr&aacute;fica es:
+</p>
+
+<div class="figure" style="width: 588px ; height: 365px ; ">
+  <p><img src="grafica1.png" width="533"
+    height="310" alt="Grafica 1">
+  <p>Gr&aacute;fica de los &iacute;ndices
+</div>
+
+<p>
+Como vemos, la <span style="font-style: italic;">Configuraci&oacute;n 4</span> alcanza los mejores resultados en los tests de coma flotante y enteros, esto nos indica que tiene el procesador m&aacute;s potente del resto. Tambi&eacute;n alcanza un valor alto en el test de lectura de disco (igual practicamente al del equipo de la <span style="font-style: italic;">Configuraci&oacute;n 3</span>), pero este valor no es muy seguro por lo que coment&eacute; anteriormente.
+</p>
+<p>
+La <span style="font-style: italic;">Configuraci&oacute;n 2</span> ha obtenido un valor bastante bueno en el tests de escritura en disco, esto se explica por el sistema de archivos del disco duro (<span style="font-style: italic;">XFS</span>) y el buen estado en que se encuentra, sin embargo, el resultado en la <span style="font-style: italic;">Configuraci&oacute;n 3</span> deja mucho que desear, ya que ha alcanzado un valor tan bajo que hasta la configuraci&oacute;n base lo ha superado.
+Esto se debe principalmente al sistema de archivos de dicho ordenador (<span style="font-style: italic;">NTFS</span>) y al estado en que se encuentra la partici&oacute;n (muy fragmentada y practicamente llena).
+</p>
+
+<p>
+El <span style="font-weight: bold;">ganador</span> de nuestros test es la <span style="font-style: italic;">Configuraci&oacute;n 2</span>. La <span style="font-style: italic;">Configuraci&oacute;n 4</span> ha estado a punto de llevarse el trofeo, ya que en la mayor&iacute;a de los tests obstenta los mejores resultados, sin embargo, el resultado tan malo obtenido en el test de escritura la ha alejado.
+</p>
+
+<hr>
+<h3>Rub&eacute;n Dugo Mart&iacute;n &lt;raubn.zero@gmail.com&gt;</h3>
+<h4>rdugomartin en YahooGROUPS</h4>
+
+
+</body>
+</html>

@@ -1,34 +1,6 @@
-Practicas Ing.Inf.Sistemas (UGR)
-================================
-================================
-
-En este repositorio iré liberando las prácticas que he realizado en toda la carrera.
-
-
-Contenido
-=========
-
-redes/
-  Redes de Computadores.
-
-mei/
-  Mantenimiento de Equipos Informáticos.
-
-ccd/
-  Codificación y Compresión de Datos.
-
-mia/
-  Modelos de Inteligencia Artificial
-
-ta/
-  Teoría de Algoritmos
-
-ed/
-  Estructuras de Datos
-
-dec/
-  Diseño y Evaluación de Computadores
-
+Diseño y Evaluación de Computadores
+===================================
+===================================
 
 Nota
 ====
